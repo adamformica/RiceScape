@@ -139,17 +139,17 @@ to recalculate-variables
 end
 
 to setup-gis
-  set-current-directory "C:/Users/Sensonomic Admin/Desktop/darwin-models"; Setting working directory. Lasse/Adam should fill in "/home/lassegs/dev/darwin-models/" here
-  set farms-dataset gis:load-dataset (word "senegal/" community "_data/" community "_EO_cropland.asc")
-  set roadsID-dataset gis:load-dataset (word "senegal/" community "_data/" community "_roads_ID.asc")
-  set roadsPaved-dataset gis:load-dataset (word "senegal/" community "_data/" community "_roads_paved.asc")
-  set storageCapacity-dataset gis:load-dataset (word "senegal/" community "_data/storage_" community "_capacity.asc")
-  set farm-probability-dataset gis:load-dataset (word "senegal/" community "_data/" community "_farm_probability.asc")
-  set hand-dataset gis:load-dataset (word "senegal/" community "_data/" community "_hand.asc")
+  set-current-directory file-path; Setting working directory. Lasse/Adam should fill in "/home/lassegs/dev/darwin-models/" here
+  set farms-dataset gis:load-dataset (word community "_data/" community "_EO_cropland.asc")
+  set roadsID-dataset gis:load-dataset (word community "_data/" community "_roads_ID.asc")
+  set roadsPaved-dataset gis:load-dataset (word community "_data/" community "_roads_paved.asc")
+  set storageCapacity-dataset gis:load-dataset (word community "_data/storage_" community "_capacity.asc")
+  set farm-probability-dataset gis:load-dataset (word community "_data/" community "_farm_probability.asc")
+  set hand-dataset gis:load-dataset (word community "_data/" community "_hand.asc")
   ifelse (community = "bandafassi") [
-    set excluded-classes-dataset gis:load-dataset (word "senegal/" community "_data/" community "_EO_trees.asc")
+    set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_EO_trees.asc")
   ] [
-    set excluded-classes-dataset gis:load-dataset (word "senegal/" community "_data/" community "_excluded_classes.asc")
+    set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_excluded_classes.asc")
   ]
 end
 
@@ -765,10 +765,10 @@ ticks
 30.0
 
 BUTTON
-81
-14
-144
-47
+87
+92
+150
+125
 NIL
 setup
 NIL
@@ -782,10 +782,10 @@ NIL
 1
 
 BUTTON
-162
-15
-225
-48
+168
+93
+231
+126
 NIL
 go
 T
@@ -799,10 +799,10 @@ NIL
 1
 
 SLIDER
-31
-600
-249
-633
+39
+674
+257
+707
 flood-risk-elevation
 flood-risk-elevation
 0
@@ -814,10 +814,10 @@ m
 HORIZONTAL
 
 SLIDER
-36
-421
-256
-454
+43
+500
+263
+533
 travel-distance
 travel-distance
 1
@@ -836,10 +836,10 @@ OUTPUT
 11
 
 SLIDER
-33
-552
-249
-585
+41
+626
+257
+659
 roads-investment
 roads-investment
 0
@@ -851,10 +851,10 @@ million CFA
 HORIZONTAL
 
 SLIDER
-41
-190
-255
-223
+48
+269
+262
+302
 population-growth-rate
 population-growth-rate
 0
@@ -902,10 +902,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot crop-quantity"
 
 SWITCH
-28
-814
-152
-847
+36
+888
+160
+921
 add-storage
 add-storage
 0
@@ -913,10 +913,10 @@ add-storage
 -1000
 
 SLIDER
-30
-652
-248
-685
+38
+726
+256
+759
 flood-weight
 flood-weight
 0
@@ -928,10 +928,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-31
-706
-244
-739
+39
+780
+252
+813
 storage-weight
 storage-weight
 0
@@ -943,10 +943,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-31
-758
-245
-791
+39
+832
+253
+865
 village-weight
 village-weight
 0
@@ -958,40 +958,40 @@ NIL
 HORIZONTAL
 
 TEXTBOX
-45
-122
-195
-140
+52
+201
+202
+219
 Crops
 11
 0.0
 1
 
 TEXTBOX
-37
-521
-187
-539
+45
+595
+195
+613
 Roads
 11
 0.0
 1
 
 CHOOSER
-39
-68
-187
-113
+46
+147
+194
+192
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-2
+0
 
 SLIDER
-39
-235
-260
-268
+46
+314
+267
+347
 hectares-per-household
 hectares-per-household
 0
@@ -1003,10 +1003,10 @@ ha
 HORIZONTAL
 
 SLIDER
-34
-470
-259
-503
+41
+549
+266
+582
 irrigated-elevation
 irrigated-elevation
 0
@@ -1018,10 +1018,10 @@ m
 HORIZONTAL
 
 SLIDER
-36
-328
-259
-361
+43
+407
+266
+440
 yield
 yield
 0
@@ -1033,10 +1033,10 @@ T / ha
 HORIZONTAL
 
 SLIDER
-40
-146
-255
-179
+47
+225
+262
+258
 initial-population
 initial-population
 1000
@@ -1048,10 +1048,10 @@ people
 HORIZONTAL
 
 SLIDER
-39
-282
-257
-315
+46
+361
+264
+394
 people-per-household
 people-per-household
 0
@@ -1063,10 +1063,10 @@ people
 HORIZONTAL
 
 SLIDER
-36
-375
-262
-408
+43
+454
+269
+487
 fraction-marketable-production
 fraction-marketable-production
 0
@@ -1129,6 +1129,17 @@ NIL
 NIL
 NIL
 1
+
+INPUTBOX
+47
+10
+286
+70
+file-path
+C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape
+1
+0
+String (commands)
 
 @#$#@#$#@
 ## WHAT IS IT?
