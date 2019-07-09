@@ -37,10 +37,11 @@ globals [
   crop-quantity
   crop-yield
   remaining-roads-budget
-  farm-cells-per-person
   villages-along-paved
   total-storage-added
   crops-per-person
+  yield-disconnected
+  yield-connected
 ]
 
 patches-own [
@@ -100,6 +101,7 @@ to setup
   calculate-road-length
   create-population
   check-villages-connected
+  check-farms-connected
   reset-ticks
   set simulation_complete false
 end
@@ -129,6 +131,7 @@ to go
   count-villages-along-paved
   calculate-total-storage-added-each-tick
   check-villages-connected
+  check-farms-connected
   tick
   if (simulation_complete = true) [ stop ]
 end
@@ -299,22 +302,46 @@ to calculate-farmProbability
   ]
 end
 
+to check-elevation-and-expand-farms
+  if ( elevation < irrigated-elevation ) [
+    set farm 1
+    set pcolor green
+  ]
+  if ( elevation > irrigated-elevation ) [
+    set farm 1
+    set pcolor lime
+  ]
+end
+
 to expand-farms
   let suitableAreas patches with [ farmProbability > 0 and farm = -1 ]
   let suitableAreaCount count suitableAreas
-  ; ha / household * household / people * cell / ha = cell / people
-  set farm-cells-per-person crops-per-person * (1 / yield) * (1 / hectares-per-cell)
-  let farm-expansion-rate additional-people * farm-cells-per-person
-  let minExpansionRate min list farm-expansion-rate suitableAreaCount
-  ask max-n-of minExpansionRate suitableAreas [ farmProbability ] [
-    if ( elevation < irrigated-elevation ) [
-      set farm 1
-      set pcolor green
-    ]
-    if ( elevation > irrigated-elevation ) [
-      set farm 1
-      set pcolor lime
-    ]
+  ; calculate additional crops required as population expands
+  let crop-expansion-rate additional-people * crops-per-person
+  ; calculate crop to farm cell conversion with low yield on disconnected farms
+  let farm-cells-per-crop-disconnected (1 / yield-disconnected) * (1 / hectares-per-cell)
+
+  ; count the number of cells with the highest farm probability using the low disconnected yields
+  let farm-cell-expansion-rate crop-expansion-rate * farm-cells-per-crop-disconnected
+  let minExpansionRate min list farm-cell-expansion-rate suitableAreaCount
+  let farms-to-expand max-n-of minExpansionRate suitableAreas [ farmProbability ]
+  ; out of the highest probability cells select those which are disconnected
+  ; and expand farms there
+  let disconnected-farms farms-to-expand with [ farmConnected? = false ]
+  ask disconnected-farms [
+    check-elevation-and-expand-farms
+  ]
+  ; out of the highest probability cells select those which are connected
+  let connected-farms farms-to-expand with [ farmConnected? = true ]
+  ; count those cells which are connected
+  let connected-farms-count count connected-farms
+  ; instead of expanding farms on all cells, only expand on a subset of them
+  ; proportional to the increase in yields
+  let connected-farms-count-reduced connected-farms-count * ( yield-disconnected / yield-connected )
+  ; expand farms on the subset of cells with the highest probability
+  let connected-farms-to-expand max-n-of connected-farms-count-reduced connected-farms [ farmProbability ]
+  ask connected-farms-to-expand [
+    check-elevation-and-expand-farms
   ]
 end
 
@@ -336,6 +363,7 @@ to add-storageCapacity
 end
 
 to add-villages
+  let farm-cells-per-person hectares-per-household * (1 / people-per-household) * (1 / hectares-per-cell)
 ;  Each village is surrounded by a maximum of pi * walking distance^2 crop cells.
 ;  ha / village * people / farm cell * cell / ha
   let people-per-village pi * walking-distance ^ 2 * (1 / farm-cells-per-person) * (1 / hectares-per-cell)
@@ -706,6 +734,8 @@ to initialize-variables
   set crop-yield hectares-per-cell * yield * fraction-marketable-production
   let initialYield yield
   set crops-per-person hectares-per-household * initialYield * (1 / people-per-household)
+  set yield-disconnected 3
+  set yield-connected 4.5
 end
 
 to calculate-crop-quantity
@@ -750,7 +780,7 @@ to check-villages-connected
   ]
 end
 
-to -farm-connected
+to check-farms-connected
   ask patches with [ storageCapacity >= 0 and villageConnected? = true ] [
     ask patches with [ farm > 0 ] in-radius walking-distance [
        set farmConnected? true
@@ -1032,7 +1062,7 @@ irrigated-elevation
 irrigated-elevation
 0
 10
-5.0
+3.0
 1
 1
 m
@@ -1047,7 +1077,7 @@ yield
 yield
 1
 10
-10.0
+3.0
 1
 1
 T / ha
