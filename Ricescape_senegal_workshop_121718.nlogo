@@ -70,6 +70,8 @@ patches-own [
 ;  roadLength
   my-road
   nearOtherVillage?
+  villageConnected?
+  farmConnected?
 ]
 
 turtles-own [
@@ -97,6 +99,8 @@ to setup
   calculate-initial-paved-ratio
   calculate-road-length
   create-population
+  check-villages-connected
+  check-farms-connected
   reset-ticks
   set simulation_complete false
 end
@@ -125,6 +129,8 @@ to go
   calculate-network-speed
   count-villages-along-paved
   calculate-total-storage-added-each-tick
+  check-villages-connected
+  check-farms-connected
   tick
   if (simulation_complete = true) [ stop ]
 end
@@ -299,7 +305,7 @@ to expand-farms
   let suitableAreas patches with [ farmProbability > 0 and farm = -1 ]
   let suitableAreaCount count suitableAreas
   ; ha / household * household / people * cell / ha = cell / people
-  set farm-cells-per-person crops-per-person * (1 / yield) * (1 / 5.29)
+  set farm-cells-per-person crops-per-person * (1 / yield) * (1 / hectares-per-cell)
   let farm-expansion-rate additional-people * farm-cells-per-person
   let minExpansionRate min list farm-expansion-rate suitableAreaCount
   ask max-n-of minExpansionRate suitableAreas [ farmProbability ] [
@@ -334,7 +340,7 @@ end
 to add-villages
 ;  Each village is surrounded by a maximum of pi * walking distance^2 crop cells.
 ;  ha / village * people / farm cell * cell / ha
-  let people-per-village pi * walking-distance ^ 2 * (1 / farm-cells-per-person) * (1 / 5.29)
+  let people-per-village pi * walking-distance ^ 2 * (1 / farm-cells-per-person) * (1 / hectares-per-cell)
 
   let available-housing count patches with [ storageCapacity >= 0 ] * people-per-village
 
@@ -699,7 +705,7 @@ to grow-population
 end
 
 to initialize-variables
-  set crop-yield 5.29 * yield * fraction-marketable-production
+  set crop-yield hectares-per-cell * yield * fraction-marketable-production
   let initialYield yield
   set crops-per-person hectares-per-household * initialYield * (1 / people-per-household)
 end
@@ -721,13 +727,13 @@ end
 
 to count-villages-along-paved
 
-  set villages-along-paved count patches with [ storageCapacity >= 0 and any? neighbors4 with [ roadsPaved = 1 ] ]
+  set villages-along-paved count patches with [ storageCapacity >= 0 and villageConnected? = true ]
 
 end
 
 to calculate-total-storage-added-each-tick
 
-  set total-storage-added sum [ storageCapacity - initialStorage ] of patches with [ storageCapacity >= 0 and any? neighbors4 with [ roadsPaved = 1 ] ]
+  set total-storage-added sum [ storageCapacity - initialStorage ] of patches with [ storageCapacity >= 0 and villageConnected? = true ]
 
 end
 
@@ -738,6 +744,20 @@ to calculate-total-storage-added
     output-show word "total added capacity: " capacity-difference
   ]
 
+end
+
+to check-villages-connected
+  ask patches with [ storageCapacity >= 0 ] [
+    if (any? neighbors4 with [ roadsPaved = 1 ]) [ set villageConnected? true ]
+  ]
+end
+
+to check-farms-connected
+  ask patches with [ storageCapacity >= 0 and villageConnected? = true ] [
+    ask patches with [ farm > 0 ] in-radius walking-distance [
+       set farmConnected? true
+    ]
+  ]
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -1027,10 +1047,10 @@ SLIDER
 440
 yield
 yield
-0
-5
-3.0
-0.01
+1
+10
+10.0
+1
 1
 T / ha
 HORIZONTAL
@@ -1143,6 +1163,21 @@ C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Rices
 1
 0
 String (commands)
+
+SLIDER
+1464
+725
+1636
+758
+hectares-per-cell
+hectares-per-cell
+1
+10
+5.29
+0.01
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
