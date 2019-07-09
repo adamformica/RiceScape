@@ -299,7 +299,10 @@ to expand-farms
   let suitableAreas patches with [ farmProbability > 0 and farm = -1 ]
   let suitableAreaCount count suitableAreas
   ; ha / household * household / people * cell / ha = cell / people
-  set farm-cells-per-person crops-per-person * (1 / yield) * (1 / 5.29)
+  set farm--per-person crops-per-person * (1 / yield)
+
+
+  set farm-cells-per-person hectares-per-household * (1 / people-per-household) * (1 / 5.29)
   let farm-expansion-rate additional-people * farm-cells-per-person
   let minExpansionRate min list farm-expansion-rate suitableAreaCount
   ask max-n-of minExpansionRate suitableAreas [ farmProbability ] [
