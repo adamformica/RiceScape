@@ -771,7 +771,7 @@ end
 
 to calculate-total-storage-added-each-tick
 
-  set total-storage-added sum [ storageCapacity - initialStorage ] of patches with [ storageCapacity >= 0 and villageConnected? = true ]
+  set total-storage-added sum [ storageCapacity - initialStorage ] of patches with [ storageCapacity >= 0 ]
 
 end
 
@@ -1196,7 +1196,7 @@ yield-connected
 yield-connected
 0
 100
-77.0
+100.0
 1
 1
 NIL
@@ -1211,7 +1211,7 @@ yield-disconnected
 yield-disconnected
 0
 100
-13.0
+3.0
 1
 1
 NIL

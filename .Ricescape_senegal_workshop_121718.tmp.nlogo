@@ -127,7 +127,7 @@ to go
   compute-manhattan-distances-out
   calculate-network-speed
   count-villages-along-paved
-  calculate-total-storage-added-each-tick
+;  calculate-total-storage-added-each-tick
   check-villages-connected
   check-farms-connected
   tick
@@ -350,7 +350,6 @@ to add-storageCapacity
     ask localFarms [
       set farmCounted? true
     ]
-
     let localFarmCount count localFarms
     let localProduction 0
     ifelse ( villageConnected? = true ) [
@@ -368,6 +367,7 @@ to add-storageCapacity
       set storageCapacity storageCapacity + capacityDifference
     ]
   ]
+  ; set all farms as not counted for the next time storage is added
   ask patches with [ farm > 0 ] [
     set farmCounted? 0
   ]
@@ -770,10 +770,10 @@ to count-villages-along-paved
 end
 
 to calculate-total-storage-added-each-tick
-
-  set total-storage-added sum [ storageCapacity - initialStorage ] of patches with [ storageCapacity >= 0 and villageConnected? = true ]
-
-end
+;
+;  set total-storage-added sum [ storageCapacity - initialStorage ] of patches with [ storageCapacity >= 0 and villageConnected? = true ]
+;
+;end
 
 to calculate-total-storage-added
 
@@ -1196,7 +1196,7 @@ yield-connected
 yield-connected
 0
 100
-77.0
+100.0
 1
 1
 NIL
@@ -1211,7 +1211,7 @@ yield-disconnected
 yield-disconnected
 0
 100
-13.0
+3.0
 1
 1
 NIL
