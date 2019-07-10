@@ -35,7 +35,7 @@ globals [
   population-growth
   additional-people
   crop-quantity
-  crop-yield
+
   remaining-roads-budget
   villages-along-paved
   total-storage-added
@@ -94,6 +94,7 @@ to setup
   display-farms
   initialize-variables
   calculate-crop-quantity
+  calculate-crops-per-person
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
   calculate-village-distance
@@ -735,18 +736,20 @@ to grow-population
 end
 
 to initialize-variables
-  set crop-yield hectares-per-cell * yield * fraction-marketable-production
-  let initialYield yield
-  set crops-per-person hectares-per-household * initialYield * (1 / people-per-household)
   set yield-disconnected 3
   set yield-connected 100
 end
 
 to calculate-crop-quantity
 ;  farm cells * ha / cell * T / ha
-  crop-quantity-connected count patches with [ farm > 0 and farmConnected? = true ] * hectares-per-cellyield-connected *
-  crop-quantity-disconnected count patches with [ farm > 0 and farmConnected? = 0 ] * yield-disconnected
+  let crop-quantity-connected count patches with [ farm > 0 and farmConnected? = true ] * hectares-per-cell * yield-connected
+  let crop-quantity-disconnected count patches with [ farm > 0 and farmConnected? = 0 ] * hectares-per-cell * yield-disconnected
   set crop-quantity crop-quantity-connected + crop-quantity-disconnected
+end
+
+to calculate-crops-per-person
+  let initial-crop-quantity crop-quantity
+  set crops-per-person initial-crop-quantity / initial-population
 end
 
 to export-world-raster
