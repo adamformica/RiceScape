@@ -70,6 +70,7 @@ patches-own [
   nearOtherVillage?
   villageConnected?
   farmConnected?
+  farmCounted?
 ]
 
 turtles-own [
@@ -343,13 +344,19 @@ end
 
 to add-storageCapacity
   ask patches with [ storageCapacity >= 0 ] [
-    ; check number of farms in proximity to storage
-    let localFarms count patches in-radius 10 with [ farm > 0 ]
+    ; select the farms in the radius of a village
+    let localFarms patches in-radius 10 with [ farm > 0 and farmCounted? = 0 ]
+    ; set them as counted to avoid double counting
+    ask localFarms [
+      set farmCounted? true
+    ]
+
+    let localFarmCount count localFarms
     let localProduction 0
     ifelse ( villageConnected? = true ) [
-      set localProduction localFarms * yield-connected
+      set localProduction localFarmCount * yield-connected
     ] [
-      set localProduction localFarms * yield-disconnected
+      set localProduction localFarmCount * yield-disconnected
     ]
     set capacityDifference localProduction - storageCapacity
     ifelse ( capacityDifference > 0 ) [
@@ -360,6 +367,9 @@ to add-storageCapacity
     if ( capacityDifference > 0 ) [
       set storageCapacity storageCapacity + capacityDifference
     ]
+  ]
+  ask patches with [ farm > 0 ] [
+    set farmCounted? 0
   ]
 end
 
@@ -1186,7 +1196,7 @@ yield-connected
 yield-connected
 0
 100
-100.0
+77.0
 1
 1
 NIL
@@ -1201,7 +1211,7 @@ yield-disconnected
 yield-disconnected
 0
 100
-3.0
+13.0
 1
 1
 NIL
