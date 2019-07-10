@@ -348,7 +348,12 @@ to add-storageCapacity
   ask patches with [ storageCapacity >= 0 ] [
     ; check number of farms in proximity to storage
     let localFarms count patches in-radius 10 with [ farm > 0 ]
-    let localProduction localFarms * crop-yield
+    let localProduction 0
+    ifelse ( villageConnected? = true ) [
+      set localProduction localFarms * yield-connected
+    ] [
+      set localProduction localFarms * yield-disconnected
+    ]
     set capacityDifference localProduction - storageCapacity
     ifelse ( capacityDifference > 0 ) [
       output-show word "added capacity: " round capacityDifference
