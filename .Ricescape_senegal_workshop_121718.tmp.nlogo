@@ -35,13 +35,10 @@ globals [
   population-growth
   additional-people
   crop-quantity
-
   remaining-roads-budget
   villages-along-paved
   total-storage-added
   crops-per-person
-  yield-disconnected
-  yield-connected
 ]
 
 patches-own [
@@ -92,7 +89,6 @@ to setup
   display-storageCapacity
   display-road-flood-risk
   display-farms
-  initialize-variables
   calculate-crop-quantity
   calculate-crops-per-person
   compute-manhattan-distances-out
@@ -735,11 +731,6 @@ to grow-population
   set population-current population-next
 end
 
-to initialize-variables
-  set yield-disconnected 3
-  set yield-connected 100
-end
-
 to calculate-crop-quantity
 ;  farm cells * ha / cell * T / ha
   let crop-quantity-connected count patches with [ farm > 0 and farmConnected? = true ] * hectares-per-cell * yield-connected
@@ -1078,21 +1069,6 @@ m
 HORIZONTAL
 
 SLIDER
-43
-407
-266
-440
-yield
-yield
-1
-10
-3.0
-1
-1
-T / ha
-HORIZONTAL
-
-SLIDER
 47
 225
 262
@@ -1120,21 +1096,6 @@ people-per-household
 1
 1
 people
-HORIZONTAL
-
-SLIDER
-43
-454
-269
-487
-fraction-marketable-production
-fraction-marketable-production
-0
-1
-0.66
-0.01
-1
-NIL
 HORIZONTAL
 
 PLOT
@@ -1212,6 +1173,36 @@ hectares-per-cell
 10
 5.29
 0.01
+1
+NIL
+HORIZONTAL
+
+SLIDER
+46
+407
+263
+440
+yield-connected
+yield-connected
+0
+100
+100.0
+1
+1
+NIL
+HORIZONTAL
+
+SLIDER
+45
+453
+263
+486
+yield-disconnected
+yield-disconnected
+0
+100
+3.0
+1
 1
 NIL
 HORIZONTAL
