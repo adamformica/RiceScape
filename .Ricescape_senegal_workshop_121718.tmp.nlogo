@@ -354,7 +354,6 @@ to add-storageCapacity
     ] [
       set localProduction localFarms * yield-disconnected
     ]
-
     set capacityDifference localProduction - storageCapacity
     ifelse ( capacityDifference > 0 ) [
       output-show word "added capacity: " round capacityDifference
@@ -745,7 +744,9 @@ end
 
 to calculate-crop-quantity
 ;  farm cells * ha / cell * T / ha
-  set crop-quantity count patches with [ farm > 0 ] * crop-yield
+  crop-quantity-connected count patches with [ farm > 0 and farmConnected? = true ] * hectares-per-cellyield-connected *
+  crop-quantity-disconnected count patches with [ farm > 0 and farmConnected? = 0 ] * yield-disconnected
+  set crop-quantity crop-quantity-connected + crop-quantity-disconnected
 end
 
 to export-world-raster
