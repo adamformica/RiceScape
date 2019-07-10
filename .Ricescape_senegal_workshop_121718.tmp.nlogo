@@ -320,14 +320,13 @@ to expand-farms
   let crop-expansion-rate additional-people * crops-per-person
   ; calculate crop to farm cell conversion with low yield on disconnected farms
   let farm-cells-per-crop-disconnected (1 / yield-disconnected) * (1 / hectares-per-cell)
-
   ; count the number of cells with the highest farm probability using the low disconnected yields
   let farm-cell-expansion-rate crop-expansion-rate * farm-cells-per-crop-disconnected
   let minExpansionRate min list farm-cell-expansion-rate suitableAreaCount
   let farms-to-expand max-n-of minExpansionRate suitableAreas [ farmProbability ]
   ; out of the highest probability cells select those which are disconnected
   ; and expand farms there
-  let disconnected-farms farms-to-expand with [ farmConnected? = false ]
+  let disconnected-farms farms-to-expand with [ farmConnected? = 0 ]
   ask disconnected-farms [
     check-elevation-and-expand-farms
   ]
@@ -349,6 +348,7 @@ to add-storageCapacity
   ask patches with [ storageCapacity >= 0 ] [
     ; check number of farms in proximity to storage
     let localFarms count patches in-radius 10 with [ farm > 0 ]
+    show sum [ farmC ] of localFarms
     let localProduction localFarms * crop-yield
     set capacityDifference localProduction - storageCapacity
     ifelse ( capacityDifference > 0 ) [
@@ -735,7 +735,7 @@ to initialize-variables
   let initialYield yield
   set crops-per-person hectares-per-household * initialYield * (1 / people-per-household)
   set yield-disconnected 3
-  set yield-connected 4.5
+  set yield-connected 100
 end
 
 to calculate-crop-quantity
@@ -782,7 +782,7 @@ end
 
 to check-farms-connected
   ask patches with [ storageCapacity >= 0 and villageConnected? = true ] [
-    ask patches with [ farm > 0 ] in-radius walking-distance [
+    ask patches in-radius walking-distance [
        set farmConnected? true
     ]
   ]

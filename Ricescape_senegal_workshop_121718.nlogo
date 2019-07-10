@@ -326,7 +326,7 @@ to expand-farms
   let farms-to-expand max-n-of minExpansionRate suitableAreas [ farmProbability ]
   ; out of the highest probability cells select those which are disconnected
   ; and expand farms there
-  let disconnected-farms farms-to-expand with [ farmConnected? = false ]
+  let disconnected-farms farms-to-expand with [ farmConnected? = 0 ]
   ask disconnected-farms [
     check-elevation-and-expand-farms
   ]
@@ -734,7 +734,7 @@ to initialize-variables
   let initialYield yield
   set crops-per-person hectares-per-household * initialYield * (1 / people-per-household)
   set yield-disconnected 3
-  set yield-connected 4.5
+  set yield-connected 100
 end
 
 to calculate-crop-quantity
@@ -781,7 +781,7 @@ end
 
 to check-farms-connected
   ask patches with [ storageCapacity >= 0 and villageConnected? = true ] [
-    ask patches with [ farm > 0 ] in-radius walking-distance [
+    ask patches in-radius walking-distance [
        set farmConnected? true
     ]
   ]
