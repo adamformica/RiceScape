@@ -320,7 +320,8 @@ to expand-farms
   let suitableAreasConnected patches with [ farmProbability > 0 and farm = -1 and farmConnected? = true ]
   let suitableAreasDisconnected patches with [ farmProbability > 0 and farm = -1 and farmConnected? = 0 ]
 
-  ;  let suitableAreaCount count suitableAreas
+  let suitableAreasConnectedCount count suitableAreasConnected
+  let suitableAreasDisconnectedCount count suitableAreasDisconnected
 
   ; divide up additional people between connected and disconnected villages
   let additional-people-per-village additional-people / count patches with [ storageCapacity >= 0 ]
@@ -338,13 +339,14 @@ to expand-farms
   let farm-cells-per-crop-disconnected (1 / yield-disconnected) * (1 / hectares-per-cell)
 
   ; count the number of cells to expand
-  let farm-cell-expansion-rate-connected crop-expansion-rate-connected *
-  let farm-cell-expansion-rate-disconnected crop-expansion-rate-disconnected * crop-expansion-rate-disconnected
+  let farm-cell-expansion-rate-connected crop-expansion-rate-connected * farm-cells-per-crop-connected
+  let farm-cell-expansion-rate-disconnected crop-expansion-rate-disconnected * farm-cells-per-crop-disconnected
 
-;  let minExpansionRate min list farm-cell-expansion-rate suitableAreaCount
+  let min-expansion-rate-connected min list farm-cell-expansion-rate-connected suitableAreasConnectedCount
+  let min-expansion-rate-disconnected min list farm-cell-expansion-rate-disconnected suitableAreasDisconnectedCount
 
-  let farms-to-expand-connected max-n-of farm-cell-expansion-rate-connected suitableAreasConnected [ farmProbability ]
-  let farms-to-expand-disconnected max-n-of farm-cell-expansion-rate-disconnected suitableAreasDisconnected [ farmProbability ]
+  let farms-to-expand-connected max-n-of min-expansion-rate-connected suitableAreasConnected [ farmProbability ]
+  let farms-to-expand-disconnected max-n-of min-expansion-rate-disconnected suitableAreasDisconnected [ farmProbability ]
 
   ask farms-to-expand-connected [
     check-elevation-and-expand-farms
@@ -1211,7 +1213,7 @@ yield-connected
 yield-connected
 0
 50
-14.0
+7.0
 1
 1
 NIL
