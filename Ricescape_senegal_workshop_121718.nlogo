@@ -223,7 +223,6 @@ to display-storageCapacity
   ask patches [
     ifelse (storageCapacity >= 0)
     [ set pcolor red ]
-;   set storageCapacity 0 ]
     [ set storageCapacity -1 ]
   ]
   gis:apply-raster storageCapacity-dataset initialStorage
@@ -922,7 +921,7 @@ roads-investment
 roads-investment
 0
 500
-150.0
+75.0
 25
 1
 million CFA
@@ -986,7 +985,7 @@ SWITCH
 921
 add-storage
 add-storage
-1
+0
 1
 -1000
 
@@ -1029,7 +1028,7 @@ village-weight
 village-weight
 0
 10
-0.0
+1.0
 1
 1
 NIL
@@ -1212,8 +1211,8 @@ SLIDER
 yield-connected
 yield-connected
 0
-50
-50.0
+10
+6.0
 1
 1
 NIL
@@ -1241,7 +1240,7 @@ SWITCH
 866
 add-new-villages
 add-new-villages
-1
+0
 1
 -1000
 
@@ -1262,6 +1261,17 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot count patches with [ farm > 0 ] - initial-farm-count"
+
+MONITOR
+1701
+369
+1770
+414
+Crop area
+count patches with [ farm > 0 ] - initial-farm-count
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
