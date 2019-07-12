@@ -318,7 +318,7 @@ end
 
 to expand-farms
   let suitableAreasConnected patches with [ farmProbability > 0 and farm = -1 and farmConnected? = true ]
-  let suitableAreasDisconnected patches with [ farmProbability > 0 and farm = -1 farmConnected? = 0 ]
+  let suitableAreasDisconnected patches with [ farmProbability > 0 and farm = -1 and farmConnected? = 0 ]
 
   ;  let suitableAreaCount count suitableAreas
 
@@ -338,7 +338,7 @@ to expand-farms
   let farm-cells-per-crop-disconnected (1 / yield-disconnected) * (1 / hectares-per-cell)
 
   ; count the number of cells to expand
-  let farm-cell-expansion-rate-connected crop-expansion-rate-connected * crop-expansion-rate-connected
+  let farm-cell-expansion-rate-connected crop-expansion-rate-connected *
   let farm-cell-expansion-rate-disconnected crop-expansion-rate-disconnected * crop-expansion-rate-disconnected
 
 ;  let minExpansionRate min list farm-cell-expansion-rate suitableAreaCount
@@ -353,7 +353,6 @@ to expand-farms
   ask farms-to-expand-disconnected [
     check-elevation-and-expand-farms
   ]
-
 end
 
 to add-storageCapacity

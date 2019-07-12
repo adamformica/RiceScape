@@ -338,8 +338,8 @@ to expand-farms
   let farm-cells-per-crop-disconnected (1 / yield-disconnected) * (1 / hectares-per-cell)
 
   ; count the number of cells to expand
-  let farm-cell-expansion-rate-connected crop-expansion-rate-connected * crop-expansion-rate-connected
-  let farm-cell-expansion-rate-disconnected crop-expansion-rate-disconnected * crop-expansion-rate-disconnected
+  let farm-cell-expansion-rate-connected crop-expansion-rate-connected * farm-cells-per-crop-connected
+  let farm-cell-expansion-rate-disconnected crop-expansion-rate-disconnected * farm-cells-per-crop-disconnected
 
 ;  let minExpansionRate min list farm-cell-expansion-rate suitableAreaCount
 
