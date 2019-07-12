@@ -39,6 +39,7 @@ globals [
   villages-along-paved
   total-storage-added
   crops-per-person
+  initial-farm-count
 ]
 
 patches-own [
@@ -114,7 +115,9 @@ to go
   calculate-farmProbability
   expand-farms
   calculate-crop-quantity
-  add-villages
+  if (add-new-villages = true) [
+    add-villages
+  ]
   if (add-storage = true) [
     add-storageCapacity
   ]
@@ -191,6 +194,7 @@ to display-farms
       set pcolor lime
     ]
   ]
+  set initial-farm-count count patches with [ farm > 0 ]
 end
 
 to apply-roadsID
@@ -219,6 +223,7 @@ to display-storageCapacity
   ask patches [
     ifelse (storageCapacity >= 0)
     [ set pcolor red ]
+;   set storageCapacity 0 ]
     [ set storageCapacity -1 ]
   ]
   gis:apply-raster storageCapacity-dataset initialStorage
@@ -300,45 +305,78 @@ to calculate-farmProbability
   ]
 end
 
-to check-elevation-and-expand-farms
-  if ( elevation < irrigated-elevation ) [
-    set farm 1
-    set pcolor green
-  ]
-  if ( elevation > irrigated-elevation ) [
-    set farm 1
-    set pcolor lime
-  ]
-end
+;to check-elevation-and-expand-farms
+;  if ( elevation < irrigated-elevation ) [
+;    set farm 1
+;    set pcolor green
+;  ]
+;  if ( elevation > irrigated-elevation ) [
+;    set farm 1
+;    set pcolor lime
+;  ]
+;end
 
 to expand-farms
   let suitableAreas patches with [ farmProbability > 0 and farm = -1 ]
   let suitableAreaCount count suitableAreas
+
+  ; divide up additional people between connected and disconnected villages
+  let additional-people-per-village additional-people / count patches with [ storageCapacity >= 0 ]
+  let village-count-connected count patches with [ storageCapacity >= 0 and villageConnected? = true ]
+  let village-count-disconnected count patches with [ storageCapacity >= 0 and villageConnected? = 0 ]
+  let additional-people-connected additional-people-per-village * village-count-connected
+  let additional-people-disconnected additional-people-per-village * village-count-disconnected
+
   ; calculate additional crops required as population expands
-  let crop-expansion-rate additional-people * crops-per-person
+  let crop-expansion-rate-connected additional-people-connected * crops-per-person
+  let crop-expansion-rate-disconnected additional-people-disconnected * crops-per-person
+
+
   ; calculate crop to farm cell conversion with low yield on disconnected farms
   let farm-cells-per-crop-disconnected (1 / yield-disconnected) * (1 / hectares-per-cell)
   ; count the number of cells with the highest farm probability using the low disconnected yields
   let farm-cell-expansion-rate crop-expansion-rate * farm-cells-per-crop-disconnected
   let minExpansionRate min list farm-cell-expansion-rate suitableAreaCount
   let farms-to-expand max-n-of minExpansionRate suitableAreas [ farmProbability ]
+
+  show count farms-to-expand
+
   ; out of the highest probability cells select those which are disconnected
   ; and expand farms there
   let disconnected-farms farms-to-expand with [ farmConnected? = 0 ]
+
+  show count disconnected-farms
+
   ask disconnected-farms [
-    check-elevation-and-expand-farms
+;    check-elevation-and-expand-farms
+    if ( elevation < irrigated-elevation ) [
+      set farm 1
+      set pcolor green
+    ]
+    if ( elevation > irrigated-elevation ) [
+      set farm 1
+      set pcolor lime
+    ]
   ]
   ; out of the highest probability cells select those which are connected
   let connected-farms farms-to-expand with [ farmConnected? = true ]
   ; count those cells which are connected
   let connected-farms-count count connected-farms
+
+  show connected-farms-count
+
   ; instead of expanding farms on all cells, only expand on a subset of them
   ; proportional to the increase in yields
   let connected-farms-count-reduced connected-farms-count * ( yield-disconnected / yield-connected )
+
+  show connected-farms-count-reduced
+
   ; expand farms on the subset of cells with the highest probability
   let connected-farms-to-expand max-n-of connected-farms-count-reduced connected-farms [ farmProbability ]
   ask connected-farms-to-expand [
-    check-elevation-and-expand-farms
+;    check-elevation-and-expand-farms
+    set farm 1
+    set pcolor yellow
   ]
 end
 
@@ -651,6 +689,9 @@ to normalize-criteria-values
       ] [
         set normalizedSilosAlongRoads 0
       ]
+;      if ( silosAlongRoads > 0 ) [
+;        set normalizedSilosAlongRoads ( 1 - normalizedSilosAlongRoads )
+;      ]
       ifelse ( maxVillagesAlongRoads > 0 ) [
         set normalizedVillagesAlongRoads precision (villagesAlongRoads / maxVillagesAlongRoads) 3
       ] [
@@ -749,6 +790,7 @@ end
 to calculate-crops-per-person
   let initial-crop-quantity crop-quantity
   set crops-per-person initial-crop-quantity / initial-population
+;  set crops-per-person 5
 end
 
 to export-world-raster
@@ -791,7 +833,7 @@ end
 to check-farms-connected
   ask patches with [ storageCapacity >= 0 and villageConnected? = true ] [
     ask patches in-radius walking-distance [
-       set farmConnected? true
+      set farmConnected? true
     ]
   ]
 end
@@ -903,7 +945,7 @@ roads-investment
 roads-investment
 0
 500
-200.0
+150.0
 25
 1
 million CFA
@@ -967,7 +1009,7 @@ SWITCH
 921
 add-storage
 add-storage
-0
+1
 1
 -1000
 
@@ -980,7 +1022,7 @@ flood-weight
 flood-weight
 0
 10
-1.0
+0.0
 1
 1
 NIL
@@ -1010,7 +1052,7 @@ village-weight
 village-weight
 0
 10
-1.0
+0.0
 1
 1
 NIL
@@ -1193,8 +1235,8 @@ SLIDER
 yield-connected
 yield-connected
 0
-10
-10.0
+50
+14.0
 1
 1
 NIL
@@ -1214,6 +1256,35 @@ yield-disconnected
 1
 NIL
 HORIZONTAL
+
+SWITCH
+336
+833
+485
+866
+add-new-villages
+add-new-villages
+1
+1
+-1000
+
+PLOT
+1675
+182
+1875
+332
+Crop area
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot count patches with [ farm > 0 ] - initial-farm-count"
 
 @#$#@#$#@
 ## WHAT IS IT?
