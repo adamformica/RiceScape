@@ -683,7 +683,7 @@ to pave-roads
 ;    ]
 ;  ]
 
-  if ( count roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) ] > 0 ) [
+  ifelse ( count roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) ] > 0 ) [
 
     set current-roads-budget ( roads-budget + remaining-roads-budget )
 
@@ -717,15 +717,13 @@ to pave-roads
 
     ]
 
-  ]
+  ] [
 
-;  ] [
-;
-;    let msg (word "No more suitable roads to pave at tick " ticks)
-;    show msg
-;    set simulation_complete true
-;
-;  ]
+    let msg (word "No more suitable roads to pave at tick " ticks)
+    show msg
+    set simulation_complete true
+
+  ]
 end
 
 to calculate-network-speed
@@ -905,7 +903,7 @@ roads-investment
 roads-investment
 0
 500
-100.0
+200.0
 25
 1
 million CFA
@@ -1210,7 +1208,7 @@ SLIDER
 yield-disconnected
 yield-disconnected
 0
-100
+10
 3.0
 1
 1
