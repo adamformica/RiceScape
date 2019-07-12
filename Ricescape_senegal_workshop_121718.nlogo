@@ -305,20 +305,22 @@ to calculate-farmProbability
   ]
 end
 
-;to check-elevation-and-expand-farms
-;  if ( elevation < irrigated-elevation ) [
-;    set farm 1
-;    set pcolor green
-;  ]
-;  if ( elevation > irrigated-elevation ) [
-;    set farm 1
-;    set pcolor lime
-;  ]
-;end
+to check-elevation-and-expand-farms
+  if ( elevation < irrigated-elevation ) [
+    set farm 1
+    set pcolor green
+  ]
+  if ( elevation > irrigated-elevation ) [
+    set farm 1
+    set pcolor lime
+  ]
+end
 
 to expand-farms
-  let suitableAreas patches with [ farmProbability > 0 and farm = -1 ]
-  let suitableAreaCount count suitableAreas
+  let suitableAreasConnected patches with [ farmProbability > 0 and farm = -1 and farmConnected? = true ]
+  let suitableAreasDisconnected patches with [ farmProbability > 0 and farm = -1 and farmConnected? = 0 ]
+
+  ;  let suitableAreaCount count suitableAreas
 
   ; divide up additional people between connected and disconnected villages
   let additional-people-per-village additional-people / count patches with [ storageCapacity >= 0 ]
@@ -331,57 +333,25 @@ to expand-farms
   let crop-expansion-rate-connected additional-people-connected * crops-per-person
   let crop-expansion-rate-disconnected additional-people-disconnected * crops-per-person
 
-  ; calculate crop to farm cell conversion with low yield on disconnected farms
+  ; calculate crop to farm cell conversion with yield
+  let farm-cells-per-crop-connected (1 / yield-connected) * (1 / hectares-per-cell)
   let farm-cells-per-crop-disconnected (1 / yield-disconnected) * (1 / hectares-per-cell)
-  let farm-cells-per-crop-connected (1 / yield-disconnected) * (1 / hectares-per-cell)
 
+  ; count the number of cells to expand
+  let farm-cell-expansion-rate-connected crop-expansion-rate-connected * crop-expansion-rate-connected
+  let farm-cell-expansion-rate-disconnected crop-expansion-rate-disconnected * crop-expansion-rate-disconnected
 
+;  let minExpansionRate min list farm-cell-expansion-rate suitableAreaCount
 
+  let farms-to-expand-connected max-n-of farm-cell-expansion-rate-connected suitableAreasConnected [ farmProbability ]
+  let farms-to-expand-disconnected max-n-of farm-cell-expansion-rate-disconnected suitableAreasDisconnected [ farmProbability ]
 
-
-  ; count the number of cells with the highest farm probability using the low disconnected yields
-  let farm-cell-expansion-rate crop-expansion-rate * farm-cells-per-crop-disconnected
-  let minExpansionRate min list farm-cell-expansion-rate suitableAreaCount
-  let farms-to-expand max-n-of minExpansionRate suitableAreas [ farmProbability ]
-
-  show count farms-to-expand
-
-  ; out of the highest probability cells select those which are disconnected
-  ; and expand farms there
-  let disconnected-farms farms-to-expand with [ farmConnected? = 0 ]
-
-  show count disconnected-farms
-
-  ask disconnected-farms [
-;    check-elevation-and-expand-farms
-    if ( elevation < irrigated-elevation ) [
-      set farm 1
-      set pcolor green
-    ]
-    if ( elevation > irrigated-elevation ) [
-      set farm 1
-      set pcolor lime
-    ]
+  ask farms-to-expand-connected [
+    check-elevation-and-expand-farms
   ]
-  ; out of the highest probability cells select those which are connected
-  let connected-farms farms-to-expand with [ farmConnected? = true ]
-  ; count those cells which are connected
-  let connected-farms-count count connected-farms
 
-  show connected-farms-count
-
-  ; instead of expanding farms on all cells, only expand on a subset of them
-  ; proportional to the increase in yields
-  let connected-farms-count-reduced connected-farms-count * ( yield-disconnected / yield-connected )
-
-  show connected-farms-count-reduced
-
-  ; expand farms on the subset of cells with the highest probability
-  let connected-farms-to-expand max-n-of connected-farms-count-reduced connected-farms [ farmProbability ]
-  ask connected-farms-to-expand [
-;    check-elevation-and-expand-farms
-    set farm 1
-    set pcolor yellow
+  ask farms-to-expand-disconnected [
+    check-elevation-and-expand-farms
   ]
 end
 
