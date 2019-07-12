@@ -905,7 +905,7 @@ roads-investment
 roads-investment
 0
 500
-250.0
+200.0
 25
 1
 million CFA
@@ -1195,8 +1195,8 @@ SLIDER
 yield-connected
 yield-connected
 0
-100
-100.0
+10
+10.0
 1
 1
 NIL
@@ -1210,7 +1210,7 @@ SLIDER
 yield-disconnected
 yield-disconnected
 0
-100
+10
 3.0
 1
 1

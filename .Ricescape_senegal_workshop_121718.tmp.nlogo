@@ -127,7 +127,7 @@ to go
   compute-manhattan-distances-out
   calculate-network-speed
   count-villages-along-paved
-;  calculate-total-storage-added-each-tick
+  calculate-total-storage-added-each-tick
   check-villages-connected
   check-farms-connected
   tick
@@ -770,10 +770,10 @@ to count-villages-along-paved
 end
 
 to calculate-total-storage-added-each-tick
-;
-;  set total-storage-added sum [ storageCapacity - initialStorage ] of patches with [ storageCapacity >= 0 and villageConnected? = true ]
-;
-;end
+
+  set total-storage-added sum [ storageCapacity - initialStorage ] of patches with [ storageCapacity >= 0 ]
+
+end
 
 to calculate-total-storage-added
 
@@ -905,7 +905,7 @@ roads-investment
 roads-investment
 0
 500
-250.0
+100.0
 25
 1
 million CFA
@@ -1195,8 +1195,8 @@ SLIDER
 yield-connected
 yield-connected
 0
-100
-100.0
+10
+10.0
 1
 1
 NIL
