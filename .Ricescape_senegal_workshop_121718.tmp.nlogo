@@ -490,6 +490,8 @@ to add-villages
 
   set available-housing available-housing-connected + available-housing-disconnected
 
+
+
   set unhoused-people max list (population-current - available-housing) 0
 
   set population-current population-current - unhoused-people
@@ -942,7 +944,7 @@ population-growth-rate
 population-growth-rate
 0
 20
-6.5
+3.5
 0.1
 1
 %
