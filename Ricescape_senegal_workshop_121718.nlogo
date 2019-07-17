@@ -72,6 +72,7 @@ patches-own [
   villageConnected?
   farmConnected?
   farmCounted?
+  eligibleVillagePatchNearRoad?
 ]
 
 turtles-own [
@@ -432,9 +433,17 @@ to add-villages
 
       while [ villages-to-add > 0 ] [
 
-        ; find which perimeter patches aren't close to an existing village
+        ; find which perimeter patches aren't close to roads
 
         ask patches with [ eligibleVillagePatch? = true and storageCapacity = -1 ] [
+
+          if (any? neighbors4 with [ roadsID > -2 ]) [ set eligibleVillagePatchNearRoad? true ]
+
+        ]
+
+        ; find which perimeter patches aren't close to an existing village
+
+        ask patches with [ eligibleVillagePatch? = true and storageCapacity = -1 and eligibleVillagePatchNearRoad? = 0 ] [
           let surroundingPatches patches in-radius walking-distance
 
           if count surroundingPatches with [ storageCapacity >= 0 ] > 1 [
@@ -447,7 +456,7 @@ to add-villages
         ; out of perimeter patches not close to existing villages,
         ; calculate the amount of available farmland around them.
 
-        ask patches with [ eligibleVillagePatch? = true and storageCapacity = -1 and nearOtherVillage? = 0 ] [
+        ask patches with [ eligibleVillagePatch? = true and storageCapacity = -1 and eligibleVillagePatchNearRoad? = 0 and nearOtherVillage? = 0 ] [
           let surroundingPatches patches in-radius walking-distance
 
           ask surroundingPatches [
@@ -466,9 +475,9 @@ to add-villages
         ; add a village to the perimeter patch not close to
         ; existing villages with the most available farmland
 
-        ifelse ( count patches with [ eligibleVillagePatch? = true and storageCapacity = -1 and nearOtherVillage? = 0 ] > 0 ) [
+        ifelse ( count patches with [ eligibleVillagePatch? = true and storageCapacity = -1 and eligibleVillagePatchNearRoad? = 0 and nearOtherVillage? = 0 ] > 0 ) [
 
-          ask max-one-of patches with [ eligibleVillagePatch? = true and storageCapacity = -1 and nearOtherVillage? = 0  ] [ dummyFarmProbabilitySum ] [
+          ask max-one-of patches with [ eligibleVillagePatch? = true and storageCapacity = -1 and eligibleVillagePatchNearRoad? = 0 and nearOtherVillage? = 0 ] [ dummyFarmProbabilitySum ] [
             set storageCapacity 0
             set pcolor red
           ]
@@ -927,7 +936,7 @@ roads-investment
 roads-investment
 0
 500
-100.0
+150.0
 25
 1
 million CFA
@@ -942,7 +951,7 @@ population-growth-rate
 population-growth-rate
 0
 20
-6.5
+10.4
 0.1
 1
 %
