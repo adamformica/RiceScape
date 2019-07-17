@@ -921,7 +921,7 @@ roads-investment
 roads-investment
 0
 500
-75.0
+500.0
 25
 1
 million CFA
@@ -936,7 +936,7 @@ population-growth-rate
 population-growth-rate
 0
 20
-3.5
+1.2
 0.1
 1
 %
@@ -979,10 +979,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot crop-quantity"
 
 SWITCH
-36
-888
-160
-921
+307
+829
+431
+862
 add-storage
 add-storage
 0
@@ -998,7 +998,7 @@ flood-weight
 flood-weight
 0
 10
-0.0
+1.0
 1
 1
 NIL
@@ -1062,7 +1062,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-0
+2
 
 SLIDER
 46
@@ -1234,10 +1234,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-336
-833
-485
-866
+480
+827
+629
+860
 add-new-villages
 add-new-villages
 0
