@@ -1085,7 +1085,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-2
+0
 
 SLIDER
 46
@@ -1126,7 +1126,7 @@ initial-population
 initial-population
 1000
 50000
-41000.0
+13000.0
 1000
 1
 people
