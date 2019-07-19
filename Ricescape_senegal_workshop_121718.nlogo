@@ -170,7 +170,7 @@ to display-excluded-classes
     [ set excludedClasses -1 ]
   ]
   if (community = "makacoulibantang") [
-    ask patches with [ pycor <= -112 ] [
+    ask patches with [ pycor < -112 ] [
       set excludedClasses 2
     ]
   ]
