@@ -959,7 +959,7 @@ population-growth-rate
 population-growth-rate
 0
 20
-2.9
+3.5
 0.1
 1
 %
@@ -1036,7 +1036,7 @@ storage-weight
 storage-weight
 0
 10
-0.0
+1.0
 1
 1
 NIL
@@ -1085,7 +1085,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-2
+0
 
 SLIDER
 46
@@ -1126,7 +1126,7 @@ initial-population
 initial-population
 1000
 50000
-41000.0
+13000.0
 1000
 1
 people

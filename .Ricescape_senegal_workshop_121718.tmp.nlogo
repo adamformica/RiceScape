@@ -959,7 +959,7 @@ population-growth-rate
 population-growth-rate
 0
 20
-2.9
+3.5
 0.1
 1
 %
@@ -1036,7 +1036,7 @@ storage-weight
 storage-weight
 0
 10
-0.0
+1.0
 1
 1
 NIL
