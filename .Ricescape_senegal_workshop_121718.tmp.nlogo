@@ -158,11 +158,8 @@ to setup-gis
   set storageCapacity-dataset gis:load-dataset (word community "_data/storage_" community "_capacity.asc")
   set farm-probability-dataset gis:load-dataset (word community "_data/" community "_farm_probability.asc")
   set hand-dataset gis:load-dataset (word community "_data/" community "_hand.asc")
-
-    set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_EO_trees.asc")
-  ] [
-    set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_excluded_classes.asc")
-  ]
+  set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_EO_trees.asc")
+;  set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_excluded_classes.asc")
 end
 
 to display-excluded-classes
@@ -171,6 +168,11 @@ to display-excluded-classes
     ifelse (excludedClasses > 1)
     [ set excludedClasses excludedClasses ]
     [ set excludedClasses -1 ]
+  ]
+  if (community = "makacoulibantang") [
+    ask patches with [ pycor <= -112 ] [
+      set excludedClasses 2
+    ]
   ]
 end
 
@@ -1111,7 +1113,7 @@ irrigated-elevation
 irrigated-elevation
 0
 10
-3.0
+2.0
 1
 1
 m

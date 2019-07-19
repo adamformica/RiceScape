@@ -169,6 +169,11 @@ to display-excluded-classes
     [ set excludedClasses excludedClasses ]
     [ set excludedClasses -1 ]
   ]
+  if (community = "makacoulibantang") [
+    ask patches with [ pycor <= -112 ] [
+      set excludedClasses 2
+    ]
+  ]
 end
 
 to display-road-flood-risk
@@ -1082,7 +1087,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-0
+2
 
 SLIDER
 46
@@ -1108,7 +1113,7 @@ irrigated-elevation
 irrigated-elevation
 0
 10
-3.0
+2.0
 1
 1
 m
