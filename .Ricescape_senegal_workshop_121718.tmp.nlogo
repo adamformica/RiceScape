@@ -158,7 +158,7 @@ to setup-gis
   set storageCapacity-dataset gis:load-dataset (word community "_data/storage_" community "_capacity.asc")
   set farm-probability-dataset gis:load-dataset (word community "_data/" community "_farm_probability.asc")
   set hand-dataset gis:load-dataset (word community "_data/" community "_hand.asc")
-  ifelse (community = "bandafassi") [
+
     set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_EO_trees.asc")
   ] [
     set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_excluded_classes.asc")
