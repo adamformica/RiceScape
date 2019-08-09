@@ -18,7 +18,6 @@ roads-own [
   my-criteria-sum
   my-roads-ID
   my-market-distance
-  my-potential-expansion
 ]
 
 road-turtles-own [
@@ -68,10 +67,8 @@ patches-own [
   checkSilo
   silosAlongRoads
   villagesAlongRoads
-  expansionAlongRoads
   normalizedSilosAlongRoads
   normalizedVillagesAlongRoads
-  normalizedExpansionAlongRoads
   normalizedAvoidedFloodProbability
   elevation
   avoidedFloodProbability
@@ -89,7 +86,6 @@ patches-own [
   farmCounted?
   eligibleVillagePatchNearRoad?
   marketDistance
-  potentialExpansion
 ]
 
 turtles-own [
@@ -97,7 +93,6 @@ turtles-own [
   homeDistance
   homeSilos
   homeVillages
-  homeExpansion
 ]
 
 to setup
@@ -112,11 +107,9 @@ to setup
   display-farms
   calculate-crop-quantity
   calculate-crops-per-person
-  calculate-village-distance
-  calculate-farmProbability
-  calculate-potential-expansion
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
+  calculate-village-distance
   calculate-initial-paved-ratio
   calculate-road-length
   create-population
@@ -124,7 +117,6 @@ to setup
   check-farms-connected
   make-road-turtles
   calculate-market-distance
-
   reset-ticks
   set simulation_complete false
 end
@@ -570,7 +562,6 @@ to compute-manhattan-distances-back-setup
       set size 5
       set homeSilos 0
       set homeVillages 0
-      set homeExpansion 0
     ]
   ]
 
@@ -595,13 +586,9 @@ to compute-manhattan-distance-back-one-step-setup
 
     let nextVillages homeVillages + neighboringSilosCount
 
-    let neighboringExpansion sum [ potentialExpansion ] of neighboringSilos
-    let nextExpansion homeExpansion + neighboringExpansion
-
     ; add silo count from individual turtle to patch total
     set silosAlongRoads silosAlongRoads + nextSilos
     set villagesAlongRoads villagesAlongRoads + nextVillages
-    set expansionAlongRoads expansionAlongRoads + nextExpansion
 
     ; necessary because once turtles reach paved roads they keep replicating
     ; and add to silo count making it become extremely high
@@ -616,7 +603,6 @@ to compute-manhattan-distance-back-one-step-setup
             set size 5
             set homeSilos nextSilos
             set homeVillages nextVillages
-            set homeExpansion nextExpansion
             ;                      set hidden? true
           ]
           ;        ]
@@ -706,9 +692,8 @@ to normalize-criteria-values
     let maxSilosAlongRoads max [ silosAlongRoads ] of unpavedRoads
     let maxVillagesAlongRoads max [ villagesAlongRoads ] of unpavedRoads
     let maxMarketDistance max [ marketDistance ] of unpavedRoads
-    let maxExpansionAlongRoads max [ expansionAlongRoads ] of unpavedRoads
 
-    show maxExpansionAlongRoads
+    show maxMarketDistance
 
     ask unpavedRoads [
       ifelse ( maxSilosAlongRoads > 0 ) [
@@ -716,15 +701,13 @@ to normalize-criteria-values
       ] [
         set normalizedSilosAlongRoads 0
       ]
+;      if ( silosAlongRoads > 0 ) [
+;        set normalizedSilosAlongRoads ( 1 - normalizedSilosAlongRoads )
+;      ]
       ifelse ( maxVillagesAlongRoads > 0 ) [
         set normalizedVillagesAlongRoads precision (villagesAlongRoads / maxVillagesAlongRoads) 3
       ] [
         set normalizedVillagesAlongRoads 0
-      ]
-      ifelse ( maxExpansionAlongRoads > 0 ) [
-        set normalizedExpansionAlongRoads precision (expansionAlongRoads / maxExpansionAlongRoads) 3
-      ] [
-        set normalizedExpansionAlongRoads 0
       ]
     ]
 
@@ -735,15 +718,13 @@ to normalize-criteria-values
         set my-max-storage max [ normalizedSilosAlongRoads ] of my-patches
         set my-max-villages max [ normalizedVillagesAlongRoads ] of my-patches
         set my-market-distance max [ marketDistance ] of my-patches / maxMarketDistance
-        set my-potential-expansion max [ normalizedExpansionAlongRoads ] of my-patches
       ] [
         set my-avoided-flood-proportion 0
         set my-max-storage 0
         set my-max-villages 0
         set my-market-distance 9999
-        set my-potential-expansion 0
       ]
-      set my-criteria-sum  flood-weight * my-avoided-flood-proportion + storage-weight * my-max-storage + village-weight * my-max-villages + distance-weight * ( 1 / my-market-distance ) + expansion-weight * my-potential-expansion
+      set my-criteria-sum  flood-weight * my-avoided-flood-proportion + storage-weight * my-max-storage + village-weight * my-max-villages + distance-weight * ( 1 / my-market-distance )
     ]
 
   ]
@@ -904,9 +885,7 @@ to calculate-market-distance
 end
 
 to calculate-potential-expansion
-  ask patches with [ storageCapacity >= 0 ] [
-    set potentialExpansion count patches in-radius walking-distance with [ farmProbability > 0 and farm = -1 ]
-  ]
+
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -1074,10 +1053,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot crop-quantity"
 
 SWITCH
-794
-825
-918
-858
+621
+826
+745
+859
 add-storage
 add-storage
 0
@@ -1329,10 +1308,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-967
-823
-1116
-856
+794
+824
+943
+857
 add-new-villages
 add-new-villages
 0
@@ -1408,21 +1387,6 @@ SLIDER
 864
 distance-weight
 distance-weight
-0
-10
-0.0
-1
-1
-NIL
-HORIZONTAL
-
-SLIDER
-478
-831
-650
-864
-expansion-weight
-expansion-weight
 0
 10
 1.0
