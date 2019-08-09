@@ -873,7 +873,7 @@ to calculate-market-distance
   ]
 
   ask patches with [ storageCapacity >= 0 ] [
-    set marketDistance first [ market-distance ] of turtles-here
+    set marketDistance  [ market-distance ] of turtles-here
   ]
 end
 @#$#@#$#@
