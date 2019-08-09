@@ -17,6 +17,7 @@ roads-own [
   my-max-villages
   my-criteria-sum
   my-roads-ID
+  my-market-distance
 ]
 
 road-turtles-own [
@@ -114,6 +115,8 @@ to setup
   create-population
   check-villages-connected
   check-farms-connected
+  make-road-turtles
+  calculate-market-distance
   reset-ticks
   set simulation_complete false
 end
@@ -688,6 +691,9 @@ to normalize-criteria-values
     let unpavedRoads patches with [ roadsPaved = 0 ]
     let maxSilosAlongRoads max [ silosAlongRoads ] of unpavedRoads
     let maxVillagesAlongRoads max [ villagesAlongRoads ] of unpavedRoads
+    let maxMarketDistance max [ marketDistance ] of unpavedRoads
+
+    show maxMarketDistance
 
     ask unpavedRoads [
       ifelse ( maxSilosAlongRoads > 0 ) [
@@ -711,12 +717,14 @@ to normalize-criteria-values
         set my-avoided-flood-proportion my-avoided-flood-sum / my-length
         set my-max-storage max [ normalizedSilosAlongRoads ] of my-patches
         set my-max-villages max [ normalizedVillagesAlongRoads ] of my-patches
+        set my-market-distance max [ marketDistance ] of my-patches / maxMarketDistance
       ] [
         set my-avoided-flood-proportion 0
         set my-max-storage 0
         set my-max-villages 0
+        set my-market-distance 9999
       ]
-      set my-criteria-sum  flood-weight * my-avoided-flood-proportion + storage-weight * my-max-storage + village-weight * my-max-villages
+      set my-criteria-sum  flood-weight * my-avoided-flood-proportion + storage-weight * my-max-storage + village-weight * my-max-villages + distance-weight * ( 1 / my-market-distance )
     ]
 
   ]
@@ -869,12 +877,15 @@ to calculate-market-distance
   ask road-turtles [
     let target one-of road-turtles with [ my-roadsID >= 0 and my-pxcor = max-pxcor ]
     set market-distance nw:distance-to target
-    show market-distance
   ]
 
-  ask patches with [  ] [
-    set marketDistance first [ market-distance ] of turtles-here
+  ask patches with [ roadsID >= -1 ] [
+    set marketDistance first [ market-distance ] of road-turtles-here
   ]
+end
+
+to calculate-potential-expansion
+
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -1042,10 +1053,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot crop-quantity"
 
 SWITCH
-307
-829
-431
-862
+621
+826
+745
+859
 add-storage
 add-storage
 0
@@ -1061,7 +1072,7 @@ flood-weight
 flood-weight
 0
 10
-1.0
+0.0
 1
 1
 NIL
@@ -1076,7 +1087,7 @@ storage-weight
 storage-weight
 0
 10
-1.0
+0.0
 1
 1
 NIL
@@ -1091,7 +1102,7 @@ village-weight
 village-weight
 0
 10
-1.0
+0.0
 1
 1
 NIL
@@ -1297,10 +1308,10 @@ NIL
 HORIZONTAL
 
 SWITCH
-480
-827
-629
-860
+794
+824
+943
+857
 add-new-villages
 add-new-villages
 0
@@ -1369,39 +1380,20 @@ false
 PENS
 "default" 1.0 0 -16777216 true "" "plot storage-connected"
 
-BUTTON
-657
-830
-788
-863
-NIL
-make-road-turtles
-NIL
+SLIDER
+282
+831
+454
+864
+distance-weight
+distance-weight
+0
+10
+1.0
 1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
 1
-
-BUTTON
-802
-826
-975
-859
 NIL
-calculate-market-distance
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
