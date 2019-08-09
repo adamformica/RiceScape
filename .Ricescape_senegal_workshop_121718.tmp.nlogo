@@ -866,14 +866,14 @@ to make-road-turtles
 end
 
 to calculate-market-distance
-  ask road-turtles with [ storageCapacity >= 0 ] [
+  ask road-turtles [
     let target one-of road-turtles with [ my-roadsID >= 0 and my-pxcor = max-pxcor ]
     set market-distance nw:distance-to target
     show market-distance
   ]
 
-  ask patches with [ storageCapacity >= 0 ] [
-    set marketDistance  [ market-distance ] of turtles-here
+  ask patches with [  ] [
+    set marketDistance first [ market-distance ] of turtles-here
   ]
 end
 @#$#@#$#@
