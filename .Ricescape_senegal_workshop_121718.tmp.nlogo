@@ -188,9 +188,8 @@ to display-excluded-classes
   gis:apply-raster excluded-classes-dataset excludedClasses
   ask patches [
     ifelse (excludedClasses > 1)
-;    [ set excludedClasses excludedClasses ]
-;    [ set excludedClasses -1 ]
-    set excludedClasses -1
+    [ set excludedClasses excludedClasses ]
+    [ set excludedClasses -1 ]
   ]
   if (community = "makacoulibantang") [
     ask patches with [ pycor < -112 ] [
@@ -1108,9 +1107,9 @@ SLIDER
 storage-weight
 storage-weight
 0
-1
+10
 0.0
-0.1
+1
 1
 NIL
 HORIZONTAL
@@ -1123,9 +1122,9 @@ SLIDER
 village-weight
 village-weight
 0
-1
+10
 0.0
-0.1
+1
 1
 NIL
 HORIZONTAL
@@ -1158,7 +1157,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-1
+0
 
 SLIDER
 46
@@ -1370,10 +1369,10 @@ count patches with [ farm > 0 ] - initial-farm-count
 11
 
 SLIDER
-1464
-778
-1636
-811
+1470
+781
+1642
+814
 cells-per-km
 cells-per-km
 1
@@ -1410,9 +1409,9 @@ SLIDER
 distance-weight
 distance-weight
 0
+10
+1.0
 1
-0.0
-0.1
 1
 NIL
 HORIZONTAL
@@ -1425,9 +1424,9 @@ SLIDER
 expansion-weight
 expansion-weight
 0
-1
+10
 1.0
-0.1
+1
 1
 NIL
 HORIZONTAL

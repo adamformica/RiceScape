@@ -1369,10 +1369,10 @@ count patches with [ farm > 0 ] - initial-farm-count
 11
 
 SLIDER
-1464
-778
-1636
-811
+1470
+781
+1642
+814
 cells-per-km
 cells-per-km
 1
@@ -1410,7 +1410,7 @@ distance-weight
 distance-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
