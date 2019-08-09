@@ -1,10 +1,6 @@
-extensions [ gis nw ]
+extensions [ gis ]
 
 breed [ roads road ]
-
-breed [ road-turtles road-turtle ]
-
-undirected-link-breed [ road-links road-link ]
 
 roads-own [
   my-patches
@@ -17,12 +13,6 @@ roads-own [
   my-max-villages
   my-criteria-sum
   my-roads-ID
-]
-
-road-turtles-own [
-  my-roadsID
-  my-pxcor
-  market-distance
 ]
 
 globals [
@@ -84,7 +74,6 @@ patches-own [
   farmConnected?
   farmCounted?
   eligibleVillagePatchNearRoad?
-  marketDistance
 ]
 
 turtles-own [
@@ -849,33 +838,6 @@ to check-farms-connected
     ]
   ]
 end
-
-to make-road-turtles
-  set-default-shape road-turtles "dot"
-  ask patches with [ roadsID >= -1 or storageCapacity >= 0 ] [
-    sprout-road-turtles 1 [
-      set my-roadsID roadsID
-      set my-pxcor pxcor
-      set hidden? true
-    ]
-  ]
-
-  ask road-turtles [ create-road-links-with road-turtles-on neighbors4 ]
-
-  ask road-links [ set hidden? true ]
-end
-
-to calculate-market-distance
-  ask road-turtles with [ storageCapacity >= 0 ] [
-    let target one-of road-turtles with [ my-roadsID >= 0 and my-pxcor = max-pxcor ]
-    set market-distance nw:distance-to target
-    show market-distance
-  ]
-
-  ask patches with [ storageCapacity >= 0 ] [
-    set marketDistance first [ market-distance ] of turtles-here
-  ]
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 303
@@ -984,7 +946,7 @@ roads-investment
 roads-investment
 0
 500
-150.0
+250.0
 25
 1
 million CFA
@@ -1125,7 +1087,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-0
+2
 
 SLIDER
 46
@@ -1151,7 +1113,7 @@ irrigated-elevation
 irrigated-elevation
 0
 10
-3.0
+2.0
 1
 1
 m
@@ -1166,7 +1128,7 @@ initial-population
 initial-population
 1000
 50000
-12000.0
+13000.0
 1000
 1
 people
@@ -1273,9 +1235,9 @@ SLIDER
 440
 yield-connected
 yield-connected
-1
+0
 10
-5.0
+6.0
 1
 1
 NIL
@@ -1288,7 +1250,7 @@ SLIDER
 486
 yield-disconnected
 yield-disconnected
-1
+0
 10
 3.0
 1
@@ -1368,40 +1330,6 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot storage-connected"
-
-BUTTON
-657
-830
-788
-863
-NIL
-make-road-turtles
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-802
-826
-975
-859
-NIL
-calculate-market-distance
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1759,369 +1687,6 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
-<experiments>
-  <experiment name="prioritization_scenarios" repetitions="10" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <metric>count patches with [ farm &gt; 0 ] - initial-farm-count</metric>
-    <metric>storage-connected</metric>
-    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="hectares-per-household">
-      <value value="1.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="file-path">
-      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-storage">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="hectares-per-cell">
-      <value value="5.29"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="irrigated-elevation">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community">
-      <value value="&quot;bandafassi&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="yield-connected">
-      <value value="6"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-population">
-      <value value="12000"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="cells-per-km">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="travel-distance">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="population-growth-rate">
-      <value value="3.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-risk-elevation">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="roads-investment">
-      <value value="75"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-new-villages">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="yield-disconnected">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="people-per-household">
-      <value value="10"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="prioritization_yield_scenarios" repetitions="10" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <metric>count patches with [ farm &gt; 0 ] - initial-farm-count</metric>
-    <metric>storage-connected</metric>
-    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="hectares-per-household">
-      <value value="1.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="file-path">
-      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-storage">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="hectares-per-cell">
-      <value value="5.29"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="irrigated-elevation">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community">
-      <value value="&quot;bandafassi&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="yield-connected" first="4" step="1" last="6"/>
-    <enumeratedValueSet variable="initial-population">
-      <value value="12000"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="cells-per-km">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="travel-distance">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="population-growth-rate">
-      <value value="3.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-risk-elevation">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="roads-investment">
-      <value value="75"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-new-villages">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="yield-disconnected">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="people-per-household">
-      <value value="10"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="prioritization_scenarios_250_investment" repetitions="10" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <metric>count patches with [ farm &gt; 0 ] - initial-farm-count</metric>
-    <metric>storage-connected</metric>
-    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="hectares-per-household">
-      <value value="1.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="file-path">
-      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-storage">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="hectares-per-cell">
-      <value value="5.29"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="irrigated-elevation">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community">
-      <value value="&quot;bandafassi&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="yield-connected">
-      <value value="6"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-population">
-      <value value="12000"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="cells-per-km">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="travel-distance">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="population-growth-rate">
-      <value value="3.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-risk-elevation">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="roads-investment">
-      <value value="250"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-new-villages">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="yield-disconnected">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="people-per-household">
-      <value value="10"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="prioritization_scenarios_storage_dynamic_static" repetitions="10" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <metric>count patches with [ farm &gt; 0 ] - initial-farm-count</metric>
-    <metric>storage-connected</metric>
-    <enumeratedValueSet variable="village-weight">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="hectares-per-household">
-      <value value="1.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="file-path">
-      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-storage">
-      <value value="false"/>
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="hectares-per-cell">
-      <value value="5.29"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="irrigated-elevation">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community">
-      <value value="&quot;bandafassi&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="yield-connected">
-      <value value="6"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-population">
-      <value value="12000"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="cells-per-km">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="travel-distance">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="population-growth-rate">
-      <value value="3.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-risk-elevation">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="roads-investment">
-      <value value="75"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-new-villages">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="storage-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="yield-disconnected">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="people-per-household">
-      <value value="10"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="prioritization_scenarios_storage_dynamic_static_250_investment" repetitions="10" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <metric>count patches with [ farm &gt; 0 ] - initial-farm-count</metric>
-    <metric>storage-connected</metric>
-    <enumeratedValueSet variable="village-weight">
-      <value value="0"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="hectares-per-household">
-      <value value="1.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="file-path">
-      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-storage">
-      <value value="false"/>
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="hectares-per-cell">
-      <value value="5.29"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="irrigated-elevation">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community">
-      <value value="&quot;bandafassi&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="yield-connected">
-      <value value="6"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-population">
-      <value value="12000"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="cells-per-km">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="travel-distance">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="population-growth-rate">
-      <value value="3.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-risk-elevation">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="roads-investment">
-      <value value="250"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-new-villages">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="storage-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="yield-disconnected">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="people-per-household">
-      <value value="10"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="investment_expansion" repetitions="5" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <metric>count patches with [ farm &gt; 0 ] - initial-farm-count</metric>
-    <metric>storage-connected</metric>
-    <metric>villages-along-paved</metric>
-    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="hectares-per-household">
-      <value value="1.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="file-path">
-      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="add-storage">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="hectares-per-cell">
-      <value value="5.29"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="irrigated-elevation">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community">
-      <value value="&quot;bandafassi&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="cells-per-km">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="yield-connected">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="initial-population">
-      <value value="12000"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="travel-distance">
-      <value value="4"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="population-growth-rate">
-      <value value="3.5"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-risk-elevation">
-      <value value="5"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="roads-investment" first="50" step="50" last="250"/>
-    <enumeratedValueSet variable="add-new-villages">
-      <value value="true"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="yield-disconnected">
-      <value value="3"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="people-per-household">
-      <value value="10"/>
-    </enumeratedValueSet>
-  </experiment>
-</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
