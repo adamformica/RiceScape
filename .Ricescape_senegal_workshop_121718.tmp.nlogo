@@ -1092,9 +1092,9 @@ SLIDER
 flood-weight
 flood-weight
 0
-10
-0.0
 1
+0.0
+0.1
 1
 NIL
 HORIZONTAL
@@ -1410,7 +1410,7 @@ distance-weight
 distance-weight
 0
 10
-0.0
+1.0
 1
 1
 NIL
