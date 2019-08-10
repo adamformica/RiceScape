@@ -131,12 +131,8 @@ to go
   calculate-farmProbability
   expand-farms
   calculate-crop-quantity
-  if (add-new-villages = true) [
-    add-villages
-  ]
-  if (add-storage = true) [
-    add-storageCapacity
-  ]
+  add-villages
+  add-storageCapacity
   compute-manhattan-distances-back-go
   normalize-criteria-values
   pave-roads
@@ -1009,17 +1005,6 @@ false
 PENS
 "default" 1.0 0 -16777216 true "" "plot crop-quantity"
 
-SWITCH
-28
-437
-152
-470
-add-storage
-add-storage
-0
-1
--1000
-
 SLIDER
 28
 268
@@ -1073,7 +1058,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-1
+2
 
 PLOT
 1448
@@ -1138,17 +1123,6 @@ C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Rices
 1
 0
 String (commands)
-
-SWITCH
-24
-490
-173
-523
-add-new-villages
-add-new-villages
-0
-1
--1000
 
 PLOT
 1675

@@ -136,7 +136,7 @@ to go
   ]
   if (add-storage = true) [
     add-storageCapacity
-  ]
+
   compute-manhattan-distances-back-go
   normalize-criteria-values
   pave-roads
@@ -163,7 +163,7 @@ to set-community-variables
 ;  kilometers
   set travel-distance 4
 ;  meters
-  set irrigated-elevation
+  set irrigated-elevation 3
   set flood-risk-elevation 5
 
   if ( community = "bandafassi" ) [
@@ -1073,7 +1073,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-1
+2
 
 PLOT
 1448
