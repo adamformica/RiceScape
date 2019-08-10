@@ -149,7 +149,7 @@ to go
   check-villages-connected
   check-farms-connected
   tick
-;  if (simulation_complete = true) [ stop ]
+  if (simulation_complete = true) [ stop ]
 end
 
 to set-community-variables
