@@ -909,10 +909,10 @@ ticks
 30.0
 
 BUTTON
-29
-97
+87
 92
-130
+150
+125
 NIL
 setup
 NIL
@@ -926,10 +926,10 @@ NIL
 1
 
 BUTTON
-106
-97
-169
-130
+168
+93
+231
+126
 NIL
 go
 T
@@ -1046,9 +1046,9 @@ NIL
 HORIZONTAL
 
 CHOOSER
-29
+46
 147
-177
+194
 192
 community
 community
@@ -1060,7 +1060,7 @@ PLOT
 355
 1648
 505
-Villages connected
+Villages reached
 years
 villages
 0.0
@@ -1073,11 +1073,29 @@ false
 PENS
 "default" 1.0 0 -16777216 true "" "plot villages-along-paved"
 
+PLOT
+1452
+522
+1652
+672
+Storage added
+years
+tons
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 0 -16777216 true "" "plot total-storage-added"
+
 BUTTON
-1448
-692
-1644
-725
+1671
+700
+1867
+733
 NIL
 calculate-total-storage-added
 NIL
@@ -1091,10 +1109,10 @@ NIL
 1
 
 INPUTBOX
-26
-21
-265
-81
+47
+10
+286
+70
 file-path
 C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape
 1
@@ -1120,10 +1138,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot count patches with [ farm > 0 ] - initial-farm-count"
 
 MONITOR
-1675
-356
-1775
-401
+1701
+369
+1801
+414
 Crop expansion
 count patches with [ farm > 0 ] - initial-farm-count
 17
@@ -1131,13 +1149,13 @@ count patches with [ farm > 0 ] - initial-farm-count
 11
 
 PLOT
-1449
-522
-1649
-672
+1676
+523
+1876
+673
 Storage connected
-years
-tons
+NIL
+NIL
 0.0
 10.0
 0.0
