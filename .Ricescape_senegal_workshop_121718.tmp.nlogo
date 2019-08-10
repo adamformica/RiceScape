@@ -235,8 +235,8 @@ to display-farms
   gis:apply-raster farms-dataset farm
   ask patches [
     ifelse (farm = 1) [
-;      filter farms to within walking distance of villages
-      ifelse ( villageDistance > 0 and roadsID = -2 and storageCapacity = -1 ) [
+;      filter ofarms to within walking distance of villages
+      ifelse ( villageDistance > 0 ) [
         set farm farm
       ] [
         set farm -1
@@ -244,7 +244,7 @@ to display-farms
     ]
     [ set farm -1 ]
   ]
-  ask patches with [ farm > 0 and roadsID = -2 and storageCapacity = -1 ] [
+  ask patches with [ farm > 0 and roadsID = -2 and storageCapacity = -1] [
     if ( elevation < irrigated-elevation ) [
       set pcolor green
     ]
@@ -837,7 +837,7 @@ end
 
 to calculate-crops-per-person
   let initial-crop-quantity crop-quantity
-  set crops-per-person initial-crop-quantity / initial-population * 5
+  set crops-per-person initial-crop-quantity / initial-population
 ;  set crops-per-person 5
 end
 
@@ -1020,7 +1020,7 @@ flood-weight
 flood-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1035,7 +1035,7 @@ storage-weight
 storage-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1064,7 +1064,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-0
+1
 
 PLOT
 1448
