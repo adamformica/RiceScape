@@ -235,7 +235,7 @@ to display-farms
   gis:apply-raster farms-dataset farm
   ask patches [
     ifelse (farm = 1) [
-;      filter farms to within walking distance of villages
+;      filter ofarms to within walking distance of villages
       ifelse ( villageDistance > 0 ) [
         set farm farm
       ] [
