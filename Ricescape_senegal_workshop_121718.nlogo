@@ -106,12 +106,12 @@ to setup
   display-roadsPaved
   display-storageCapacity
   display-road-flood-risk
-  calculate-village-distance
   display-farms
   calculate-crop-quantity
   calculate-crops-per-person
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
+  calculate-village-distance
   calculate-initial-paved-ratio
   calculate-road-length
   create-population
@@ -234,14 +234,8 @@ end
 to display-farms
   gis:apply-raster farms-dataset farm
   ask patches [
-    ifelse (farm = 1) [
-;      filter farms to within walking distance of villages
-      ifelse ( villageDistance > 0 ) [
-        set farm farm
-      ] [
-        set farm -1
-      ]
-    ]
+    ifelse (farm = 1)
+    [ set farm farm ]
     [ set farm -1 ]
   ]
   ask patches with [ farm > 0 and roadsID = -2 and storageCapacity = -1] [
@@ -969,7 +963,7 @@ roads-investment
 roads-investment
 0
 500
-25.0
+250.0
 25
 1
 million CFA
@@ -1064,7 +1058,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-1
+2
 
 PLOT
 1448
