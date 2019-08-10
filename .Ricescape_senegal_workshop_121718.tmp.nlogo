@@ -54,6 +54,7 @@ globals [
   crops-per-person
   initial-farm-count
   storage-connected
+  people-per-village
 ]
 
 patches-own [
@@ -109,6 +110,7 @@ to setup
   display-farms
   calculate-crop-quantity
   calculate-crops-per-person
+  calculate-people-per-village
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
   calculate-village-distance
@@ -131,12 +133,8 @@ to go
   calculate-farmProbability
   expand-farms
   calculate-crop-quantity
-  if (add-new-villages = true) [
-    add-villages
-  ]
-  if (add-storage = true) [
-    add-storageCapacity
-
+  add-villages
+  add-storageCapacity
   compute-manhattan-distances-back-go
   normalize-criteria-values
   pave-roads
@@ -151,14 +149,14 @@ to go
   check-villages-connected
   check-farms-connected
   tick
-  if (simulation_complete = true) [ stop ]
+;  if (simulation_complete = true) [ stop ]
 end
 
 to set-community-variables
   set hectares-per-household 1.5
   set people-per-household 10
 ;  tons per hectare
-  set yield-connected 5
+  set yield-connected 50
   set yield-disconnected 3
 ;  kilometers
   set travel-distance 4
@@ -443,20 +441,16 @@ to add-storageCapacity
   ]
 end
 
+to calculate-people-per-village
+  set people-per-village initial-population / count patches with [ storageCapacity >= 0 ]
+end
+
 to add-villages
-;  Each village is surrounded by a maximum of pi * walking distance^2 crop cells.
-;  ha / village * T / ha * people / T
-  let people-per-village-connected pi * walking-distance ^ 2 * yield-connected * (1 / crops-per-person)
-  let people-per-village-disconnected pi * walking-distance ^ 2 * yield-disconnected * (1 / crops-per-person)
-
-  let available-housing-connected count patches with [ storageCapacity >= 0 and villageConnected? = true ] * people-per-village-connected
-  let available-housing-disconnected count patches with [ storageCapacity >= 0 and villageConnected? = 0 ] * people-per-village-disconnected
-
-  let available-housing available-housing-connected + available-housing-disconnected
+  let available-housing count patches with [ storageCapacity >= 0 ] * people-per-village
 
   let unhoused-people max list (population-current - available-housing) 0
 
-  let villages-to-add ceiling (unhoused-people / people-per-village-disconnected)
+  let villages-to-add ceiling (unhoused-people / people-per-village)
 
   if (villages-to-add > 0) [
 
@@ -549,10 +543,7 @@ to add-villages
 
   ]
 
-  set available-housing-connected count patches with [ storageCapacity >= 0 and villageConnected? = true ] * people-per-village-connected
-  set available-housing-disconnected count patches with [ storageCapacity >= 0 and villageConnected? = 0 ] * people-per-village-disconnected
-
-  set available-housing available-housing-connected + available-housing-disconnected
+  set available-housing count patches with [ storageCapacity >= 0 ] * people-per-village
 
   set unhoused-people max list (population-current - available-housing) 0
 
@@ -967,7 +958,7 @@ roads-investment
 roads-investment
 0
 500
-250.0
+150.0
 25
 1
 million CFA
@@ -1009,17 +1000,6 @@ false
 PENS
 "default" 1.0 0 -16777216 true "" "plot crop-quantity"
 
-SWITCH
-28
-437
-152
-470
-add-storage
-add-storage
-0
-1
--1000
-
 SLIDER
 28
 268
@@ -1029,7 +1009,7 @@ flood-weight
 flood-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1044,7 +1024,7 @@ storage-weight
 storage-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1073,7 +1053,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-2
+0
 
 PLOT
 1448
@@ -1139,23 +1119,12 @@ C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Rices
 0
 String (commands)
 
-SWITCH
-24
-490
-173
-523
-add-new-villages
-add-new-villages
-0
-1
--1000
-
 PLOT
 1675
 182
 1875
 332
-Crop area
+Crop expansion
 NIL
 NIL
 0.0
@@ -1171,9 +1140,9 @@ PENS
 MONITOR
 1701
 369
-1770
+1801
 414
-Crop area
+Crop expansion
 count patches with [ farm > 0 ] - initial-farm-count
 17
 1
