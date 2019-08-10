@@ -54,7 +54,6 @@ globals [
   crops-per-person
   initial-farm-count
   storage-connected
-  people-per-village
 ]
 
 patches-own [
@@ -110,7 +109,6 @@ to setup
   display-farms
   calculate-crop-quantity
   calculate-crops-per-person
-  calculate-people-per-village
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
   calculate-village-distance
@@ -149,7 +147,7 @@ to go
   check-villages-connected
   check-farms-connected
   tick
-;  if (simulation_complete = true) [ stop ]
+  if (simulation_complete = true) [ stop ]
 end
 
 to set-community-variables
@@ -441,16 +439,20 @@ to add-storageCapacity
   ]
 end
 
-to calculate-people-per-village
-  set people-per-village initial-population / count patches with [ storageCapacity >= 0 ]
-end
-
 to add-villages
-  let available-housing count patches with [ storageCapacity >= 0 ] * people-per-village
+;  Each village is surrounded by a maximum of pi * walking distance^2 crop cells.
+;  ha / village * T / ha * people / T
+  let people-per-village-connected pi * walking-distance ^ 2 * yield-connected * (1 / crops-per-person)
+  let people-per-village-disconnected pi * walking-distance ^ 2 * yield-disconnected * (1 / crops-per-person)
+
+  let available-housing-connected count patches with [ storageCapacity >= 0 and villageConnected? = true ] * people-per-village-connected
+  let available-housing-disconnected count patches with [ storageCapacity >= 0 and villageConnected? = 0 ] * people-per-village-disconnected
+
+  let available-housing available-housing-connected + available-housing-disconnected
 
   let unhoused-people max list (population-current - available-housing) 0
 
-  let villages-to-add ceiling (unhoused-people / people-per-village)
+  let villages-to-add ceiling (unhoused-people / people-per-village-disconnected)
 
   if (villages-to-add > 0) [
 
@@ -543,7 +545,10 @@ to add-villages
 
   ]
 
-  set available-housing count patches with [ storageCapacity >= 0 ] * people-per-village
+  set available-housing-connected count patches with [ storageCapacity >= 0 and villageConnected? = true ] * people-per-village-connected
+  set available-housing-disconnected count patches with [ storageCapacity >= 0 and villageConnected? = 0 ] * people-per-village-disconnected
+
+  set available-housing available-housing-connected + available-housing-disconnected
 
   set unhoused-people max list (population-current - available-housing) 0
 
@@ -958,7 +963,7 @@ roads-investment
 roads-investment
 0
 500
-150.0
+250.0
 25
 1
 million CFA
@@ -1009,7 +1014,7 @@ flood-weight
 flood-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1024,7 +1029,7 @@ storage-weight
 storage-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1053,7 +1058,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-0
+2
 
 PLOT
 1448
@@ -1124,7 +1129,7 @@ PLOT
 182
 1875
 332
-Crop expansion
+Crop area
 NIL
 NIL
 0.0
@@ -1140,9 +1145,9 @@ PENS
 MONITOR
 1701
 369
-1801
+1770
 414
-Crop expansion
+Crop area
 count patches with [ farm > 0 ] - initial-farm-count
 17
 1
