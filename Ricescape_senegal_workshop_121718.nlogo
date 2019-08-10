@@ -163,7 +163,7 @@ to set-community-variables
 ;  kilometers
   set travel-distance 4
 ;  meters
-  set irrigated-elevation 2
+  set irrigated-elevation 3
   set flood-risk-elevation 5
 
   if ( community = "bandafassi" ) [

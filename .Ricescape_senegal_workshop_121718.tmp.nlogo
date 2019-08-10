@@ -163,7 +163,7 @@ to set-community-variables
 ;  kilometers
   set travel-distance 4
 ;  meters
-  set irrigated-elevation 2
+  set irrigated-elevation
   set flood-risk-elevation 5
 
   if ( community = "bandafassi" ) [
@@ -959,10 +959,10 @@ OUTPUT
 11
 
 SLIDER
-38
-671
-254
-704
+28
+213
+244
+246
 roads-investment
 roads-investment
 0
@@ -1010,10 +1010,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot crop-quantity"
 
 SWITCH
-307
-829
-431
-862
+28
+437
+152
+470
 add-storage
 add-storage
 0
@@ -1021,10 +1021,10 @@ add-storage
 -1000
 
 SLIDER
-38
-726
-256
-759
+28
+268
+246
+301
 flood-weight
 flood-weight
 0
@@ -1036,10 +1036,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-39
-780
-252
-813
+29
+322
+242
+355
 storage-weight
 storage-weight
 0
@@ -1051,10 +1051,10 @@ NIL
 HORIZONTAL
 
 SLIDER
-39
-832
-253
-865
+29
+374
+243
+407
 village-weight
 village-weight
 0
@@ -1064,26 +1064,6 @@ village-weight
 1
 NIL
 HORIZONTAL
-
-TEXTBOX
-52
-201
-202
-219
-Crops
-11
-0.0
-1
-
-TEXTBOX
-45
-595
-195
-613
-Roads
-11
-0.0
-1
 
 CHOOSER
 46
@@ -1160,10 +1140,10 @@ C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Rices
 String (commands)
 
 SWITCH
-480
-827
-629
-860
+24
+490
+173
+523
 add-new-villages
 add-new-villages
 0
