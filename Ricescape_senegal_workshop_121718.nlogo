@@ -916,10 +916,10 @@ ticks
 30.0
 
 BUTTON
-87
+29
+96
 92
-150
-125
+129
 NIL
 setup
 NIL
@@ -933,10 +933,10 @@ NIL
 1
 
 BUTTON
-168
-93
-231
-126
+107
+96
+170
+129
 NIL
 go
 T
@@ -965,7 +965,7 @@ roads-investment
 roads-investment
 0
 500
-150.0
+50.0
 25
 1
 million CFA
@@ -988,24 +988,6 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot population-current"
-
-PLOT
-1449
-181
-1649
-331
-Crop quantity
-years
-tons
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot crop-quantity"
 
 SLIDER
 28
@@ -1053,21 +1035,21 @@ NIL
 HORIZONTAL
 
 CHOOSER
-46
+29
 147
-194
+177
 192
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-1
+0
 
 PLOT
 1448
 355
 1648
 505
-Villages reached
+Villages connected
 years
 villages
 0.0
@@ -1080,29 +1062,11 @@ false
 PENS
 "default" 1.0 0 -16777216 true "" "plot villages-along-paved"
 
-PLOT
-1452
-522
-1652
-672
-Storage added
-years
-tons
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"default" 1.0 0 -16777216 true "" "plot total-storage-added"
-
 BUTTON
-1671
-700
-1867
-733
+1449
+701
+1645
+734
 NIL
 calculate-total-storage-added
 NIL
@@ -1116,10 +1080,10 @@ NIL
 1
 
 INPUTBOX
-47
-10
-286
-70
+27
+18
+266
+78
 file-path
 C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape
 1
@@ -1127,13 +1091,13 @@ C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Rices
 String (commands)
 
 PLOT
-1675
+1447
 182
-1875
+1647
 332
-Crop area
-NIL
-NIL
+Crop expansion
+years
+hectares
 0.0
 10.0
 0.0
@@ -1142,27 +1106,27 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot count patches with [ farm > 0 ] - initial-farm-count"
+"default" 1.0 0 -16777216 true "" "plot ( count patches with [ farm > 0 ] - initial-farm-count ) * hectares-per-cell"
 
 MONITOR
-1701
-369
-1770
-414
-Crop area
-count patches with [ farm > 0 ] - initial-farm-count
-17
+1666
+182
+1792
+227
+Crop expansion (ha)
+( count patches with [ farm > 0 ] - initial-farm-count ) * hectares-per-cell
+0
 1
 11
 
 PLOT
-1676
+1449
 523
-1876
+1649
 673
 Storage connected
-NIL
-NIL
+years
+tons
 0.0
 10.0
 0.0
