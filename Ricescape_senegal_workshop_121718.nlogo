@@ -1042,7 +1042,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-0
+1
 
 PLOT
 1448
@@ -1494,11 +1494,14 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="crop_expansion" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="crop_expansion" repetitions="10" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
+    <timeLimit steps="32"/>
     <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
-    <steppedValueSet variable="village-weight" first="0" step="0.5" last="1"/>
+    <metric>villages-along-paved</metric>
+    <metric>storage-connected</metric>
+    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
     <enumeratedValueSet variable="file-path">
       <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
     </enumeratedValueSet>
@@ -1508,7 +1511,7 @@ NetLogo 6.0.4
       <value value="&quot;makacoulibantang&quot;"/>
       <value value="&quot;ndorna&quot;"/>
     </enumeratedValueSet>
-    <steppedValueSet variable="storage-weight" first="0" step="0.5" last="1"/>
+    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
     <enumeratedValueSet variable="flood-weight">
       <value value="1"/>
     </enumeratedValueSet>
