@@ -965,7 +965,7 @@ roads-investment
 roads-investment
 0
 500
-50.0
+250.0
 25
 1
 million CFA
@@ -1493,6 +1493,27 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="crop_expansion" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
+    <steppedValueSet variable="village-weight" first="0" step="0.5" last="1"/>
+    <enumeratedValueSet variable="file-path">
+      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="roads-investment" first="50" step="100" last="250"/>
+    <enumeratedValueSet variable="community">
+      <value value="&quot;bandafassi&quot;"/>
+      <value value="&quot;makacoulibantang&quot;"/>
+      <value value="&quot;ndorna&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="storage-weight" first="0" step="0.5" last="1"/>
+    <enumeratedValueSet variable="flood-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
