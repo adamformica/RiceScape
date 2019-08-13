@@ -147,7 +147,7 @@ to go
   check-villages-connected
   check-farms-connected
   tick
-  if (simulation_complete = true) [ stop ]
+;  if (simulation_complete = true) [ stop ]
 end
 
 to set-community-variables
@@ -1494,7 +1494,7 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="crop_expansion" repetitions="10" runMetricsEveryStep="true">
+  <experiment name="crop_expansion" repetitions="30" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="32"/>
@@ -1512,6 +1512,32 @@ NetLogo 6.0.4
       <value value="&quot;ndorna&quot;"/>
     </enumeratedValueSet>
     <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
+    <enumeratedValueSet variable="flood-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="investment_levels" repetitions="30" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="17"/>
+    <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
+    <metric>villages-along-paved</metric>
+    <metric>storage-connected</metric>
+    <enumeratedValueSet variable="village-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="file-path">
+      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="roads-investment" first="50" step="50" last="500"/>
+    <enumeratedValueSet variable="community">
+      <value value="&quot;bandafassi&quot;"/>
+      <value value="&quot;makacoulibantang&quot;"/>
+      <value value="&quot;ndorna&quot;"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="storage-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
     <enumeratedValueSet variable="flood-weight">
       <value value="1"/>
     </enumeratedValueSet>
