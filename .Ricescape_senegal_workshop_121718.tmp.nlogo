@@ -446,8 +446,8 @@ to report-storageCapacity
 ;        output-print round capacityDifference
       ] [
         output-show "added capacity: 0"
-;        for storage added by village table
-;        output-print 0
+
+        output-print 0
       ]
     ]
   ]
@@ -803,7 +803,7 @@ to pave-roads
           ask my-patches with [ storageCapacity >= 0 ] [
             set pcolor red
           ]
-          output-show word "Pave road " my-roads-ID
+;          output-show word "Pave road " my-roads-ID
         ]
 
 
@@ -858,9 +858,8 @@ to export-world-raster
 end
 
 to show-year
-  output-show (word "Year " (ticks + 2018))
-;  for storage added by village table
-;  output-print (ticks + 2018)
+;  output-show (word "Year " (ticks + 2018))
+  output-print (ticks + 2018)
 end
 
 to count-villages-along-paved
