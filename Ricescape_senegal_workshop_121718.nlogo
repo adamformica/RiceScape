@@ -122,7 +122,8 @@ to setup
 end
 
 to go
- ; export-world-raster
+  ; turn on when mapping results
+;  export-world-raster
   show-year
   recalculate-variables
   grow-population
@@ -147,6 +148,7 @@ to go
   check-villages-connected
   check-farms-connected
   tick
+  if (ticks = 17) [ stop ]
 ;  if (simulation_complete = true) [ stop ]
 end
 
@@ -839,7 +841,7 @@ end
 
 to export-world-raster
   set world_raster gis:patch-dataset pcolor
-  let directory "C:/Users/Sensonomic Admin/Desktop/world_raster_export_files/world_raster_export"
+  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/world_raster_export_files_" community "/world_raster_export" )
   gis:store-dataset world_raster word directory ticks
 end
 
@@ -1042,7 +1044,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang"
-1
+0
 
 PLOT
 1448
@@ -1136,6 +1138,39 @@ false
 "" ""
 PENS
 "default" 1.0 0 -16777216 true "" "plot storage-connected"
+
+MONITOR
+1670
+527
+1788
+572
+NIL
+storage-connected
+0
+1
+11
+
+MONITOR
+1671
+355
+1785
+400
+Villages connected
+villages-along-paved
+0
+1
+11
+
+MONITOR
+1672
+14
+1743
+59
+Population
+population-current
+0
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
