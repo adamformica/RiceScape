@@ -134,6 +134,7 @@ to go
   calculate-crop-quantity
   add-villages
   add-storageCapacity
+  report-storageCapacity
   compute-manhattan-distances-back-go
   normalize-criteria-values
   pave-roads
@@ -426,11 +427,6 @@ to add-storageCapacity
       set localProduction localFarmCount * yield-disconnected
     ]
     set capacityDifference localProduction - storageCapacity
-    ifelse ( capacityDifference > 0 ) [
-      output-show word "added capacity: " round capacityDifference
-    ] [
-      output-show "added capacity: 0"
-    ]
     if ( capacityDifference > 0 ) [
       set storageCapacity storageCapacity + capacityDifference
     ]
@@ -438,6 +434,18 @@ to add-storageCapacity
   ; set all farms as not counted for the next time storage is added
   ask patches with [ farm > 0 ] [
     set farmCounted? 0
+  ]
+end
+
+to report-storageCapacity
+  foreach sort-on [ pycor] patches with [ storageCapacity >= 0 ] [ p ->
+    ask p [
+      ifelse ( capacityDifference > 0 ) [
+        output-show word "added capacity: " round capacityDifference
+      ] [
+        output-show "added capacity: 0"
+      ]
+    ]
   ]
 end
 
