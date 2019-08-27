@@ -72,13 +72,15 @@ to apply-rasters
   ]
   if ( structure = "scale_free" ) [
     nw:generate-preferential-attachment nodes links 50 1
-    repeat 1000 [ layout-spring nodes links 1 40 150 ]
-;    let root-agent max-one-of turtles [ count my-links ]
-;    layout-radial turtles links root-agent
+;    repeat 1000 [ layout-spring nodes links 1 40 150 ]
+    let root-agent max-one-of turtles [ count my-links ]
+    layout-radial turtles links root-agent
   ]
   if ( structure = "spoke_and_wheel" ) [
     nw:generate-wheel nodes links 25
-    repeat 1000 [ layout-spring nodes links 0.1 30 500 ]
+;    repeat 1000 [ layout-spring nodes links 0.5 20 500 ]
+    let root-agent max-one-of turtles [ count my-links ]
+    layout-radial turtles links root-agent
   ]
 
   ; hide links and nodes
@@ -182,8 +184,8 @@ to make-farms
   ask nodes [
     let patchesCount count patches in-radius farm-radius with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
 ;    if ( neighboringVillageCount = 1 ) [
-;    if ( ( distanceToPaved * 1.5 ) < roadStartDistance and villagesAlongRoads = 0 ) [
-    if ( communitySize > 0.8 * maxCommunitySize ) [
+    if ( ( distanceToPaved * 2 ) < roadStartDistance and villagesAlongRoads = 0 ) [
+;    if ( communitySize > 0.8 * maxCommunitySize ) [
 ;    if ( communitySize < 0.6 * maxCommunitySize and communitySize > 0.4 * maxCommunitySize ) [
       ask n-of patchesCount patches in-radius farm-radius with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ] [
         set pcolor green
@@ -372,7 +374,7 @@ CHOOSER
 structure
 structure
 "scale_free" "lattice" "spoke_and_wheel"
-0
+2
 
 BUTTON
 41
