@@ -45,8 +45,12 @@ to setup
   clear-all
   set farm-radius 10
   apply-rasters
+
+
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
+  count-neighboring-villages
+  calculate-node-distances
   community-detection
   make-farms
   add-storageCapacity
@@ -67,8 +71,8 @@ to apply-rasters
     repeat 1000 [ layout-spring nodes links 1 35 1000 ]
   ]
   if ( structure = "scale_free" ) [
-    nw:generate-preferential-attachment nodes links 25 1
-    repeat 1000 [ layout-spring nodes links 1 40 200 ]
+    nw:generate-preferential-attachment nodes links 50 1
+    repeat 1000 [ layout-spring nodes links 1 40 150 ]
 ;    let root-agent max-one-of turtles [ count my-links ]
 ;    layout-radial turtles links root-agent
   ]
@@ -167,16 +171,25 @@ to apply-rasters
   ]
 end
 
+to count-neighboring-villages
+  ask nodes [
+    set neighboringVillageCount count patches in-radius ( 3.5 * farm-radius ) with [ storageCapacity >= 0 ]
+  ]
+end
+
 to make-farms
   ; make farm patches
-  ask [ communityMembers ] of one-of nodes [
+  ask nodes [
     let patchesCount count patches in-radius farm-radius with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
-;    if ( communitySize < 0.5 * maxCommunitySize ) [
+;    if ( neighboringVillageCount = 1 ) [
+;    if ( ( distanceToPaved * 1.5 ) < roadStartDistance and villagesAlongRoads = 0 ) [
+    if ( communitySize > 0.8 * maxCommunitySize ) [
+;    if ( communitySize < 0.6 * maxCommunitySize and communitySize > 0.4 * maxCommunitySize ) [
       ask n-of patchesCount patches in-radius farm-radius with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ] [
         set pcolor green
         set farm 1
       ]
-;    ]
+    ]
 
   ]
 end
@@ -199,6 +212,15 @@ to add-storageCapacity
     let capacityDifference localProduction - storageCapacity
     if ( capacityDifference > 0 ) [
       set storageCapacity storageCapacity + capacityDifference
+    ]
+  ]
+end
+
+to calculate-node-distances
+  if count nodes with [ roadsPaved > 0 ] > 0 [
+    let maxX max [ pxcor ] of nodes with [ roadsPaved > 0 ]
+    ask nodes [
+      set distanceToPaved distance one-of nodes with [ roadsPaved > 0 and pxcor = maxX ]
     ]
   ]
 end

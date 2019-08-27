@@ -152,7 +152,7 @@ to go
   check-villages-connected
   check-farms-connected
   tick
-  if (ticks = 17) [ stop ]
+  if (ticks = 27) [ stop ]
 ;  if (simulation_complete = true) [ stop ]
 end
 
@@ -788,9 +788,13 @@ to pave-roads
 
     set current-roads-budget ( roads-budget + remaining-roads-budget )
 
+    show current-roads-budget
+
     while [ current-roads-budget > 0 and count roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) ] > 0 ] [
 
       let roads-to-pave roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) ]
+
+      show roads-to-pave
 
       let road-to-pave max-one-of roads-to-pave [ my-criteria-sum ]
 
@@ -1033,7 +1037,7 @@ flood-weight
 flood-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1046,9 +1050,9 @@ SLIDER
 355
 storage-weight
 storage-weight
-0
+-1
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1063,7 +1067,7 @@ village-weight
 village-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1606,27 +1610,6 @@ NetLogo 6.0.4
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="network_structure" repetitions="10" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
-    <metric>villages-along-paved</metric>
-    <metric>storage-connected</metric>
-    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="file-path">
-      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="roads-investment">
-      <value value="250"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community">
-      <value value="&quot;scale_free&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
     <enumeratedValueSet variable="flood-weight">
       <value value="1"/>
     </enumeratedValueSet>
