@@ -68,7 +68,7 @@ to apply-rasters
   ]
   if ( structure = "scale_free" ) [
     nw:generate-preferential-attachment nodes links 25 1
-    repeat 1000 [ layout-spring nodes links 1 40 200 ]
+    repeat 1000 [ layout-spring nodes links 1  150 ]
 ;    let root-agent max-one-of turtles [ count my-links ]
 ;    layout-radial turtles links root-agent
   ]

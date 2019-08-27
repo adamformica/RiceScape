@@ -1048,7 +1048,7 @@ storage-weight
 storage-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
