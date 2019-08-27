@@ -13,6 +13,7 @@ roads-own [
   my-max-villages
   my-criteria-sum
   my-roads-ID
+  roadsConnected?
 ]
 
 globals [
@@ -87,6 +88,7 @@ patches-own [
   farmConnected?
   farmCounted?
   eligibleVillagePatchNearRoad?
+  nextToRoad?
 ]
 
 turtles-own [
@@ -137,6 +139,7 @@ to go
   report-storageCapacity
   compute-manhattan-distances-back-go
   normalize-criteria-values
+;  check-roads-connected
   pave-roads
   ; including the below procedure in the go procedure
   ; is necessary for new paved roads to mostly connect
@@ -149,7 +152,7 @@ to go
   check-villages-connected
   check-farms-connected
   tick
-  if (ticks = 17) [ stop ]
+  if (ticks = 27) [ stop ]
 ;  if (simulation_complete = true) [ stop ]
 end
 
@@ -165,7 +168,7 @@ to set-community-variables
   set irrigated-elevation 3
   set flood-risk-elevation 5
 
-  if ( community = "bandafassi" ) [
+  if ( community = "bandafassi" or community = "scale_free" or community = "lattice" or community = "spoke_and_wheel") [
     set initial-population 12000
 ;    percent per year
     set population-growth-rate 3.5
@@ -206,7 +209,6 @@ to setup-gis
   set roadsID-dataset gis:load-dataset (word community "_data/" community "_roads_ID.asc")
   set roadsPaved-dataset gis:load-dataset (word community "_data/" community "_roads_paved.asc")
   set storageCapacity-dataset gis:load-dataset (word community "_data/storage_" community "_capacity.asc")
-  set farm-probability-dataset gis:load-dataset (word community "_data/" community "_farm_probability.asc")
   set hand-dataset gis:load-dataset (word community "_data/" community "_hand.asc")
   set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_EO_trees.asc")
 ;  set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_excluded_classes.asc")
@@ -313,7 +315,7 @@ to calculate-road-length
 
   let road_indices [ who ] of roads
 
-  let first_road_index item 1 sort road_indices
+  let first_road_index first sort road_indices
 
   let i first_road_index
 
@@ -582,7 +584,7 @@ to compute-manhattan-distances-out
       set size 5
     ]
   ]
-  repeat 250 [ compute-manhattan-distance-out-one-step ]
+  repeat 750 [ compute-manhattan-distance-out-one-step ]
 end
 
 to compute-manhattan-distance-out-one-step
@@ -614,7 +616,7 @@ to compute-manhattan-distances-back-setup
     ]
   ]
 
-  repeat 200 [ compute-manhattan-distance-back-one-step-setup ]
+  repeat 600 [ compute-manhattan-distance-back-one-step-setup ]
 
 end
 
@@ -761,8 +763,8 @@ to normalize-criteria-values
       set my-avoided-flood-sum sum [ avoidedFloodProbability ] of my-patches
       ifelse ( my-length > 0 ) [
         set my-avoided-flood-proportion my-avoided-flood-sum / my-length
-        set my-max-storage max [ normalizedSilosAlongRoads ] of my-patches
-        set my-max-villages max [ normalizedVillagesAlongRoads ] of my-patches
+        set my-max-storage first modes [ normalizedSilosAlongRoads ] of my-patches
+        set my-max-villages first modes [ normalizedVillagesAlongRoads ] of my-patches
       ] [
         set my-avoided-flood-proportion 0
         set my-max-storage 0
@@ -786,9 +788,13 @@ to pave-roads
 
     set current-roads-budget ( roads-budget + remaining-roads-budget )
 
+    show current-roads-budget
+
     while [ current-roads-budget > 0 and count roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) ] > 0 ] [
 
       let roads-to-pave roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) ]
+
+      show roads-to-pave
 
       let road-to-pave max-one-of roads-to-pave [ my-criteria-sum ]
 
@@ -903,6 +909,23 @@ to check-farms-connected
     ]
   ]
 end
+
+to check-roads-connected
+  ask roads [
+    ask my-patches [
+      if any? neighbors with [ roadsPaved = 1 ] [ set nextToRoad? true ]
+    ]
+    if any? my-patches with [ nextToRoad? = true ] [ set roadsConnected? true ]
+  ]
+;  ask roads [
+;    if roadsConnected? = true and my-paved = 0 [
+;      show my-max-villages
+;      show my-max-storage
+;      let randomColor random 100
+;      ask my-patches [ set pcolor randomColor ]
+;    ]
+;  ]
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 303
@@ -1014,7 +1037,7 @@ flood-weight
 flood-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1027,7 +1050,7 @@ SLIDER
 355
 storage-weight
 storage-weight
-0
+-1
 1
 1.0
 0.1
@@ -1044,7 +1067,7 @@ village-weight
 village-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1057,8 +1080,8 @@ CHOOSER
 192
 community
 community
-"bandafassi" "ndorna" "makacoulibantang"
-1
+"bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "spoke_and_wheel"
+3
 
 PLOT
 1448
