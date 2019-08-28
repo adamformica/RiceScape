@@ -7,6 +7,7 @@ breed [ distanceCounters distanceCounter ]
 globals [
   farm-radius
   maxCommunitySize
+  distanceRatio
 ]
 
 patches-own [
@@ -67,20 +68,26 @@ to apply-rasters
 
   ; create network
   if ( structure = "lattice" ) [
+    random-seed 2
     nw:generate-lattice-2d nodes links 5 5 false
     repeat 1000 [ layout-spring nodes links 1 35 1000 ]
+    set distanceRatio 1.5
   ]
   if ( structure = "scale_free" ) [
-    nw:generate-preferential-attachment nodes links 50 1
+    random-seed 56
+    nw:generate-preferential-attachment nodes links 25 1
 ;    repeat 1000 [ layout-spring nodes links 1 40 150 ]
     let root-agent max-one-of turtles [ count my-links ]
     layout-radial turtles links root-agent
+    set distanceRatio 1.5
   ]
-  if ( structure = "spoke_and_wheel" ) [
+  if ( structure = "wheel" ) [
+    random-seed 103
     nw:generate-wheel nodes links 25
 ;    repeat 1000 [ layout-spring nodes links 0.5 20 500 ]
     let root-agent max-one-of turtles [ count my-links ]
     layout-radial turtles links root-agent
+    set distanceRatio 1.5
   ]
 
   ; hide links and nodes
@@ -156,6 +163,11 @@ to apply-rasters
     set roadsPaved 1
   ]
 
+  ; recolor villages
+  ask nodes [
+    set pcolor red
+  ]
+
   ask patches with [ storageCapacity > 0 and any? neighbors with [ roadsPaved = 1 ] ] [
     set pcolor gray
     set storageCapacity -1
@@ -184,14 +196,14 @@ to make-farms
   ask nodes [
     let patchesCount count patches in-radius farm-radius with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
 ;    if ( neighboringVillageCount = 1 ) [
-    if ( ( distanceToPaved * 2 ) < roadStartDistance and villagesAlongRoads = 0 ) [
+;    if ( ( distanceToPaved * distanceRatio ) < roadStartDistance and villagesAlongRoads = 0 and not any? neighbors with [ roadsPaved = 1 ] ) [
 ;    if ( communitySize > 0.8 * maxCommunitySize ) [
 ;    if ( communitySize < 0.6 * maxCommunitySize and communitySize > 0.4 * maxCommunitySize ) [
-      ask n-of patchesCount patches in-radius farm-radius with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ] [
+      ask n-of random patchesCount patches in-radius farm-radius with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ] [
         set pcolor green
         set farm 1
       ]
-    ]
+;    ]
 
   ]
 end
@@ -331,12 +343,12 @@ to export
   let storageCapacity_raster gis:patch-dataset storageCapacity
   let elevation_raster gis:patch-dataset elevation
   let excluded_raster gis:patch-dataset excludedClasses
-  gis:store-dataset farms_raster (word file-path structure "_data/" structure "_EO_cropland.asc" )
-  gis:store-dataset roadsID_raster (word file-path structure "_data/" structure "_roads_ID.asc" )
-  gis:store-dataset roadsPaved_raster (word file-path structure "_data/" structure "_roads_paved.asc" )
-  gis:store-dataset storageCapacity_raster (word file-path structure "_data/storage_" structure "_capacity.asc" )
-  gis:store-dataset elevation_raster (word file-path structure "_data/" structure "_hand.asc" )
-  gis:store-dataset excluded_raster (word file-path structure "_data/" structure "_EO_trees.asc" )
+  gis:store-dataset farms_raster (word file-path structure "_random_data/" structure "_random_EO_cropland.asc" )
+  gis:store-dataset roadsID_raster (word file-path structure "_random_data/" structure "_random_roads_ID.asc" )
+  gis:store-dataset roadsPaved_raster (word file-path structure "_random_data/" structure "_random_roads_paved.asc" )
+  gis:store-dataset storageCapacity_raster (word file-path structure "_random_data/storage_" structure "_random_capacity.asc" )
+  gis:store-dataset elevation_raster (word file-path structure "_random_data/" structure "_random_hand.asc" )
+  gis:store-dataset excluded_raster (word file-path structure "_random_data/" structure "_random_EO_trees.asc" )
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -367,13 +379,13 @@ ticks
 30.0
 
 CHOOSER
-41
-79
-189
-124
+39
+80
+187
+125
 structure
 structure
-"scale_free" "lattice" "spoke_and_wheel"
+"scale_free" "lattice" "wheel"
 2
 
 BUTTON
@@ -394,10 +406,10 @@ NIL
 1
 
 BUTTON
-41
-141
-110
-174
+39
+142
+108
+175
 NIL
 export
 NIL

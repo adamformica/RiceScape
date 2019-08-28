@@ -168,7 +168,7 @@ to set-community-variables
   set irrigated-elevation 3
   set flood-risk-elevation 5
 
-  if ( community = "bandafassi" or community = "scale_free" or community = "lattice" or community = "spoke_and_wheel") [
+  if ( community = "bandafassi" or ( community != "makacoulibantang" and community != "ndorna" ) ) [
     set initial-population 12000
 ;    percent per year
     set population-growth-rate 3.5
@@ -788,13 +788,9 @@ to pave-roads
 
     set current-roads-budget ( roads-budget + remaining-roads-budget )
 
-    show current-roads-budget
-
     while [ current-roads-budget > 0 and count roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) ] > 0 ] [
 
       let roads-to-pave roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) ]
-
-      show roads-to-pave
 
       let road-to-pave max-one-of roads-to-pave [ my-criteria-sum ]
 
@@ -859,7 +855,7 @@ end
 
 to export-world-raster
   set world_raster gis:patch-dataset pcolor
-  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/world_raster_export_files_" community "/world_raster_export" )
+  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_maps/world_raster_export_files_" community "/world_raster_export" )
   gis:store-dataset world_raster word directory ticks
 end
 
@@ -1037,7 +1033,7 @@ flood-weight
 flood-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1052,7 +1048,7 @@ storage-weight
 storage-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1076,12 +1072,12 @@ HORIZONTAL
 CHOOSER
 29
 147
-177
+225
 192
 community
 community
-"bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "spoke_and_wheel"
-3
+"bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
+8
 
 PLOT
 1448
@@ -1614,23 +1610,30 @@ NetLogo 6.0.4
       <value value="1"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="network_structure" repetitions="10" runMetricsEveryStep="true">
+  <experiment name="network_structure" repetitions="30" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
+    <timeLimit steps="17"/>
     <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
+    <metric>villages-along-paved</metric>
+    <metric>storage-connected</metric>
     <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
     <enumeratedValueSet variable="file-path">
       <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="community">
-      <value value="&quot;spoke_and_wheel&quot;"/>
+      <value value="&quot;scale_free_random&quot;"/>
+      <value value="&quot;lattice_random&quot;"/>
+      <value value="&quot;wheel_random&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="roads-investment">
+      <value value="50"/>
+      <value value="150"/>
       <value value="250"/>
     </enumeratedValueSet>
     <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
     <enumeratedValueSet variable="flood-weight">
-      <value value="0"/>
+      <value value="1"/>
     </enumeratedValueSet>
   </experiment>
 </experiments>
