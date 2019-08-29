@@ -763,8 +763,15 @@ to normalize-criteria-values
       set my-avoided-flood-sum sum [ avoidedFloodProbability ] of my-patches
       ifelse ( my-length > 0 ) [
         set my-avoided-flood-proportion my-avoided-flood-sum / my-length
-        set my-max-storage first modes [ normalizedSilosAlongRoads ] of my-patches
-        set my-max-villages first modes [ normalizedVillagesAlongRoads ] of my-patches
+        ; necessary or else not all villages will get connected in the senegal communities
+        ; because of villages along road segments instead of at the ends
+        ifelse ( community = "bandafassi" or community = "makacoulibantang" or community = "ndorna" ) [
+          set my-max-storage max [ normalizedSilosAlongRoads ] of my-patches
+          set my-max-villages max [ normalizedVillagesAlongRoads ] of my-patches
+        ] [
+          set my-max-storage first modes [ normalizedSilosAlongRoads ] of my-patches
+          set my-max-villages first modes [ normalizedVillagesAlongRoads ] of my-patches
+        ]
       ] [
         set my-avoided-flood-proportion 0
         set my-max-storage 0
@@ -1033,7 +1040,7 @@ flood-weight
 flood-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1063,7 +1070,7 @@ village-weight
 village-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1077,7 +1084,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-3
+0
 
 PLOT
 1448
@@ -1562,55 +1569,7 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="crop_expansion" repetitions="30" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <timeLimit steps="32"/>
-    <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
-    <metric>villages-along-paved</metric>
-    <metric>storage-connected</metric>
-    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="file-path">
-      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="roads-investment" first="50" step="100" last="250"/>
-    <enumeratedValueSet variable="community">
-      <value value="&quot;bandafassi&quot;"/>
-      <value value="&quot;makacoulibantang&quot;"/>
-      <value value="&quot;ndorna&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="flood-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="investment_levels" repetitions="30" runMetricsEveryStep="true">
-    <setup>setup</setup>
-    <go>go</go>
-    <timeLimit steps="17"/>
-    <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
-    <metric>villages-along-paved</metric>
-    <metric>storage-connected</metric>
-    <enumeratedValueSet variable="village-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="file-path">
-      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
-    </enumeratedValueSet>
-    <steppedValueSet variable="roads-investment" first="50" step="50" last="500"/>
-    <enumeratedValueSet variable="community">
-      <value value="&quot;bandafassi&quot;"/>
-      <value value="&quot;makacoulibantang&quot;"/>
-      <value value="&quot;ndorna&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="storage-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="flood-weight">
-      <value value="1"/>
-    </enumeratedValueSet>
-  </experiment>
-  <experiment name="network_structure" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="investment_levels" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="17"/>
@@ -1622,9 +1581,15 @@ NetLogo 6.0.4
       <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="community">
+      <value value="&quot;bandafassi&quot;"/>
+      <value value="&quot;ndorna&quot;"/>
+      <value value="&quot;makacoulibantang&quot;"/>
       <value value="&quot;scale_free&quot;"/>
       <value value="&quot;lattice&quot;"/>
       <value value="&quot;wheel&quot;"/>
+      <value value="&quot;scale_free_random&quot;"/>
+      <value value="&quot;lattice_random&quot;"/>
+      <value value="&quot;wheel_random&quot;"/>
     </enumeratedValueSet>
     <steppedValueSet variable="roads-investment" first="50" step="50" last="500"/>
     <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
