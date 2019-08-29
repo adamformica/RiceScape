@@ -22,7 +22,6 @@ patches-own [
   checkSilo
   silosAlongRoads
   villagesAlongRoads
-  neighboringVillageCount
   distanceToPaved
 ]
 
@@ -45,21 +44,16 @@ links-own [
 to setup
   clear-all
   set farm-radius 10
-  apply-rasters
-
-
+  make-layers
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
-  count-neighboring-villages
   calculate-node-distances
-  community-detection
   make-farms
   add-storageCapacity
 end
 
-to apply-rasters
-;  random-seed 41
-
+to make-layers
+  ; set up GIS with extent of Bandafassi
   let file-path "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape"
   let community "bandafassi"
   set-current-directory file-path
@@ -67,13 +61,13 @@ to apply-rasters
   gis:set-world-envelope (gis:envelope-of farms-dataset)
 
   ; create network
-  if ( structure = "lattice" ) [
+  if ( structure = "lattice" or structure = "lattice_random" ) [
     random-seed 2
     nw:generate-lattice-2d nodes links 5 5 false
     repeat 1000 [ layout-spring nodes links 1 35 1000 ]
     set distanceRatio 1.5
   ]
-  if ( structure = "scale_free" ) [
+  if ( structure = "scale_free" or structure = "scale_free_random" ) [
     random-seed 56
     nw:generate-preferential-attachment nodes links 25 1
 ;    repeat 1000 [ layout-spring nodes links 1 40 150 ]
@@ -81,7 +75,7 @@ to apply-rasters
     layout-radial turtles links root-agent
     set distanceRatio 1.5
   ]
-  if ( structure = "wheel" ) [
+  if ( structure = "wheel" or structure = "wheel_random" ) [
     random-seed 103
     nw:generate-wheel nodes links 25
 ;    repeat 1000 [ layout-spring nodes links 0.5 20 500 ]
@@ -90,7 +84,7 @@ to apply-rasters
     set distanceRatio 1.5
   ]
 
-  ; hide links and nodes
+  ; hide network links and nodes
   ask nodes [
     set hidden? true
   ]
@@ -98,12 +92,13 @@ to apply-rasters
     set hidden? true
   ]
 
-  ; make road patches
+  ; set all patches to not roads
   ask patches [
     set roadsPaved -1
     set roadsID -2
   ]
 
+;  draw roads along patches under network links
   create-dummies 1
 
   let linksCount count links
@@ -133,11 +128,12 @@ to apply-rasters
   ]
   ask dummies [ die ]
 
+  ; set all patches to not villages
   ask patches with [ storageCapacity = 0 ] [
     set storageCapacity -1
   ]
 
-  ; make village patches
+  ; draw villages on patches under network nodes
   ask nodes [
     set pcolor red
     set storageCapacity 0
@@ -163,14 +159,9 @@ to apply-rasters
     set roadsPaved 1
   ]
 
-  ; recolor villages
+  ; recolor villages with paved roads
   ask nodes [
     set pcolor red
-  ]
-
-  ask patches with [ storageCapacity > 0 and any? neighbors with [ roadsPaved = 1 ] ] [
-    set pcolor gray
-    set storageCapacity -1
   ]
 
   ; make excluded patches
@@ -185,38 +176,24 @@ to apply-rasters
   ]
 end
 
-to count-neighboring-villages
-  ask nodes [
-    set neighboringVillageCount count patches in-radius ( 3.5 * farm-radius ) with [ storageCapacity >= 0 ]
-  ]
-end
-
 to make-farms
-  ; make farm patches
   ask nodes [
-    let patchesCount count patches in-radius farm-radius with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
-;    if ( neighboringVillageCount = 1 ) [
-;    if ( ( distanceToPaved * distanceRatio ) < roadStartDistance and villagesAlongRoads = 0 and not any? neighbors with [ roadsPaved = 1 ] ) [
-;    if ( communitySize > 0.8 * maxCommunitySize ) [
-;    if ( communitySize < 0.6 * maxCommunitySize and communitySize > 0.4 * maxCommunitySize ) [
-      ask n-of random patchesCount patches in-radius farm-radius with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ] [
+    let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
+    let patchesCount count eligibleFarmPatches in-radius farm-radius
+    ifelse ( structure = "scale_free" or structure = "lattice" or structure = "wheel" ) [
+      if ( ( distanceToPaved * distanceRatio ) < roadStartDistance and villagesAlongRoads = 0 and not any? neighbors with [ roadsPaved = 1 ] ) [
+        ask n-of patchesCount eligibleFarmPatches in-radius farm-radius [
+          set pcolor green
+          set farm 1
+        ]
+      ]
+    ] [
+      ask n-of random patchesCount eligibleFarmPatches in-radius farm-radius [
         set pcolor green
         set farm 1
       ]
-;    ]
-
+    ]
   ]
-end
-
-to community-detection
-  foreach nw:louvain-communities [ [comm] ->
-    ask comm [ set communityMembers comm ]
-  ]
-  ask turtles [
-    set communitySize count communityMembers
-
-  ]
-  set maxCommunitySize max [ communitySize ] of turtles
 end
 
 to add-storageCapacity
@@ -325,6 +302,7 @@ to compute-manhattan-distance-back-one-step-setup
   ]
 end
 
+; quickly check the identity of all road segments on the map
 to color-roads
   let roadsIDList remove-duplicates [ roadsID ] of patches with [ roadsID > -2 ]
   foreach roadsIDList [ x ->
@@ -343,12 +321,12 @@ to export
   let storageCapacity_raster gis:patch-dataset storageCapacity
   let elevation_raster gis:patch-dataset elevation
   let excluded_raster gis:patch-dataset excludedClasses
-  gis:store-dataset farms_raster (word file-path structure "_random_data/" structure "_random_EO_cropland.asc" )
-  gis:store-dataset roadsID_raster (word file-path structure "_random_data/" structure "_random_roads_ID.asc" )
-  gis:store-dataset roadsPaved_raster (word file-path structure "_random_data/" structure "_random_roads_paved.asc" )
-  gis:store-dataset storageCapacity_raster (word file-path structure "_random_data/storage_" structure "_random_capacity.asc" )
-  gis:store-dataset elevation_raster (word file-path structure "_random_data/" structure "_random_hand.asc" )
-  gis:store-dataset excluded_raster (word file-path structure "_random_data/" structure "_random_EO_trees.asc" )
+  gis:store-dataset farms_raster (word file-path structure "_data/" structure "_EO_cropland.asc" )
+  gis:store-dataset roadsID_raster (word file-path structure "_data/" structure "_roads_ID.asc" )
+  gis:store-dataset roadsPaved_raster (word file-path structure "_data/" structure "_roads_paved.asc" )
+  gis:store-dataset storageCapacity_raster (word file-path structure "_data/storage_" structure "_capacity.asc" )
+  gis:store-dataset elevation_raster (word file-path structure "_data/" structure "_hand.asc" )
+  gis:store-dataset excluded_raster (word file-path structure "_data/" structure "_EO_trees.asc" )
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -381,12 +359,12 @@ ticks
 CHOOSER
 39
 80
-187
+194
 125
 structure
 structure
-"scale_free" "lattice" "wheel"
-2
+"scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
+5
 
 BUTTON
 41

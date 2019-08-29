@@ -1000,7 +1000,7 @@ roads-investment
 roads-investment
 0
 500
-250.0
+500.0
 25
 1
 million CFA
@@ -1077,7 +1077,7 @@ CHOOSER
 community
 community
 "bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-8
+3
 
 PLOT
 1448
@@ -1610,7 +1610,7 @@ NetLogo 6.0.4
       <value value="1"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="network_structure" repetitions="30" runMetricsEveryStep="true">
+  <experiment name="network_structure" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="17"/>
@@ -1622,15 +1622,11 @@ NetLogo 6.0.4
       <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="community">
-      <value value="&quot;scale_free_random&quot;"/>
-      <value value="&quot;lattice_random&quot;"/>
-      <value value="&quot;wheel_random&quot;"/>
+      <value value="&quot;scale_free&quot;"/>
+      <value value="&quot;lattice&quot;"/>
+      <value value="&quot;wheel&quot;"/>
     </enumeratedValueSet>
-    <enumeratedValueSet variable="roads-investment">
-      <value value="50"/>
-      <value value="150"/>
-      <value value="250"/>
-    </enumeratedValueSet>
+    <steppedValueSet variable="roads-investment" first="50" step="50" last="500"/>
     <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
     <enumeratedValueSet variable="flood-weight">
       <value value="1"/>
