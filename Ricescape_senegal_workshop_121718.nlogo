@@ -17,7 +17,6 @@ roads-own [
 ]
 
 globals [
-;  community variables
   hectares-per-household
   people-per-household
   yield-connected
@@ -29,7 +28,6 @@ globals [
   population-growth-rate
   hectares-per-cell
   cells-per-km
-
   farms-dataset
   roadsID-dataset
   roadsPaved-dataset
@@ -81,7 +79,6 @@ patches-own [
   dummyFarmProbability
   eligibleVillagePatch?
   excludedClasses
-;  roadLength
   my-road
   nearOtherVillage?
   villageConnected?
@@ -100,25 +97,24 @@ turtles-own [
 
 to setup
   clear-all
+  ; initial variables
   set-community-variables
   recalculate-variables
-  setup-gis
-  display-excluded-classes
-  apply-roadsID
-  display-roadsPaved
-  display-storageCapacity
-  display-road-flood-risk
-  display-farms
+  ; spatial data
+  read-spatial-data
+  load-and-display-spatial-data
+  ; population growth
+  create-population
+  ; crop expansion
   calculate-crop-quantity
   calculate-crops-per-person
-  compute-manhattan-distances-out
-  compute-manhattan-distances-back-setup
   calculate-village-distance
-  calculate-initial-paved-ratio
-  calculate-road-length
-  create-population
   check-villages-connected
   check-farms-connected
+  ; road upgrades
+  compute-manhattan-distances-out
+  compute-manhattan-distances-back-setup
+  calculate-road-length
   reset-ticks
   set simulation_complete false
 end
@@ -126,14 +122,16 @@ end
 to go
   ; turn on when mapping results
 ;  export-world-raster
+  ; intial variables
   show-year
   recalculate-variables
+  ; population growth
   grow-population
-  calculate-road-flood-risk
+  ; crop expansion
   calculate-village-distance
   calculate-farmProbability
   expand-farms
-  calculate-crop-quantity
+  calculate-road-flood-risk
   add-villages
   add-storageCapacity
   report-storageCapacity
@@ -145,7 +143,6 @@ to go
   ; is necessary for new paved roads to mostly connect
   ; with existing paved roads as in the setup
   compute-manhattan-distances-out
-  calculate-network-speed
   count-villages-along-paved
   count-storage-connected
   calculate-total-storage-added-each-tick
@@ -159,52 +156,50 @@ end
 to set-community-variables
   set hectares-per-household 1.5
   set people-per-household 10
-;  tons per hectare
+  ;  tons per hectare
   set yield-connected 5
   set yield-disconnected 3
-;  kilometers
-  set travel-distance 4
-;  meters
+  ;  meters
   set irrigated-elevation 3
   set flood-risk-elevation 5
 
   if ( community = "bandafassi" or ( community != "makacoulibantang" and community != "ndorna" ) ) [
     set initial-population 12000
-;    percent per year
-    set population-growth-rate 3.5
+    ;    percent per year
+    set population-growth 0.035
     set hectares-per-cell 5.29
     set cells-per-km 4
   ]
 
   if ( community = "makacoulibantang" ) [
     set initial-population 42000
-;    percent per year
-    set population-growth-rate 2.9
+    ;    percent per year
+    set population-growth 0.029
     set hectares-per-cell 3.61
     set cells-per-km 5
   ]
 
   if ( community = "ndorna" ) [
     set initial-population 13000
-;    percent per year
-    set population-growth-rate 2.6
+    ;    percent per year
+    set population-growth 0.026
     set hectares-per-cell 2.89
     set cells-per-km 6
   ]
+
+  ;  kilometers
+  set walking-distance round 4 * cells-per-km
 end
 
 to recalculate-variables
-  set walking-distance round travel-distance * cells-per-km
   ; each km of road costs 25 million CFA to build
   ; multiply by 1 km / 25 million CFA to get km
   ; then multiply by 4 grid cells / km to get budget
   ; in grid cell length
   set roads-budget round roads-investment * 1 / 25 * cells-per-km
-  set population-growth population-growth-rate / 100
 end
 
-to setup-gis
-  set-current-directory file-path; Setting working directory. Lasse/Adam should fill in "/home/lassegs/dev/darwin-models/" here
+to read-spatial-data
   set farms-dataset gis:load-dataset (word community "_data/" community "_EO_cropland.asc")
   set roadsID-dataset gis:load-dataset (word community "_data/" community "_roads_ID.asc")
   set roadsPaved-dataset gis:load-dataset (word community "_data/" community "_roads_paved.asc")
@@ -212,6 +207,15 @@ to setup-gis
   set hand-dataset gis:load-dataset (word community "_data/" community "_hand.asc")
   set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_EO_trees.asc")
 ;  set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_excluded_classes.asc")
+end
+
+to load-and-display-spatial-data
+  display-excluded-classes
+  apply-roadsID
+  display-roadsPaved
+  display-storageCapacity
+  display-road-flood-risk
+  display-farms
 end
 
 to display-excluded-classes
@@ -226,32 +230,6 @@ to display-excluded-classes
       set excludedClasses 2
     ]
   ]
-end
-
-to display-road-flood-risk
-  gis:apply-raster hand-dataset elevation
-  ask patches with [ roadsPaved = 0 and storageCapacity = -1 ] [
-    if (elevation < flood-risk-elevation )
-    [ set pcolor blue ]
-  ]
-end
-
-to display-farms
-  gis:apply-raster farms-dataset farm
-  ask patches [
-    ifelse (farm = 1)
-    [ set farm farm ]
-    [ set farm -1 ]
-  ]
-  ask patches with [ farm > 0 and roadsID = -2 and storageCapacity = -1] [
-    if ( elevation < irrigated-elevation ) [
-      set pcolor green
-    ]
-    if ( elevation > irrigated-elevation ) [
-      set pcolor lime
-    ]
-  ]
-  set initial-farm-count count patches with [ farm > 0 ]
 end
 
 to apply-roadsID
@@ -290,19 +268,38 @@ to display-storageCapacity
   ]
 end
 
+to display-road-flood-risk
+  gis:apply-raster hand-dataset elevation
+  ask patches with [ roadsPaved = 0 and storageCapacity = -1 ] [
+    if (elevation < flood-risk-elevation )
+    [ set pcolor blue ]
+  ]
+end
+
+to display-farms
+  gis:apply-raster farms-dataset farm
+  ask patches [
+    ifelse (farm = 1)
+    [ set farm farm ]
+    [ set farm -1 ]
+  ]
+  ask patches with [ farm > 0 and roadsID = -2 and storageCapacity = -1] [
+    if ( elevation < irrigated-elevation ) [
+      set pcolor green
+    ]
+    if ( elevation > irrigated-elevation ) [
+      set pcolor lime
+    ]
+  ]
+  set initial-farm-count count patches with [ farm > 0 ]
+end
+
 to calculate-village-distance
   ask patches with [ storageCapacity >= 0 ] [
     ask patches in-radius walking-distance [
       set villageDistance distance myself
     ]
   ]
-end
-
-to calculate-initial-paved-ratio
-  set networkSpeed 17.21
-  let totalRoads count patches with [ roadsID > -2 ]
-  let pavedRoads count patches with [ roadsID > -2 and roadsPaved = 1 ]
-  set initialPavedRatio pavedRoads / totalRoads
 end
 
 to calculate-road-length
@@ -834,13 +831,6 @@ to pave-roads
   ]
 end
 
-to calculate-network-speed
-  let totalRoads count patches with [ roadsID > -2 ]
-  let pavedRoads count patches with [ roadsID > -2 and roadsPaved = 1 ]
-  let currentPavedRatio pavedRoads / totalRoads
-  set networkSpeed ( 17.21 / initialPavedRatio ) * currentPavedRatio
-end
-
 to grow-population
   set population-next population-current * ( 1 + population-growth )
   set additional-people population-next - population-current
@@ -857,7 +847,6 @@ end
 to calculate-crops-per-person
   let initial-crop-quantity crop-quantity
   set crops-per-person initial-crop-quantity / initial-population
-;  set crops-per-person 5
 end
 
 to export-world-raster
@@ -958,10 +947,10 @@ ticks
 30.0
 
 BUTTON
-29
-96
-92
-129
+32
+21
+95
+54
 NIL
 setup
 NIL
@@ -975,10 +964,10 @@ NIL
 1
 
 BUTTON
-107
-96
-170
-129
+110
+21
+173
+54
 NIL
 go
 T
@@ -999,15 +988,15 @@ OUTPUT
 11
 
 SLIDER
-28
-213
-244
-246
+31
+138
+247
+171
 roads-investment
 roads-investment
 0
 500
-500.0
+250.0
 25
 1
 million CFA
@@ -1032,25 +1021,25 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot population-current"
 
 SLIDER
-28
-268
-246
-301
+31
+193
+249
+226
 flood-weight
 flood-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
 HORIZONTAL
 
 SLIDER
-29
-322
-242
-355
+32
+247
+245
+280
 storage-weight
 storage-weight
 0
@@ -1062,29 +1051,29 @@ NIL
 HORIZONTAL
 
 SLIDER
-29
-374
-243
-407
+32
+299
+246
+332
 village-weight
 village-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
 HORIZONTAL
 
 CHOOSER
-29
-147
-225
-192
+32
+72
+228
+117
 community
 community
 "bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-0
+5
 
 PLOT
 1448
@@ -1120,17 +1109,6 @@ NIL
 NIL
 NIL
 1
-
-INPUTBOX
-27
-18
-266
-78
-file-path
-C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape
-1
-0
-String (commands)
 
 PLOT
 1447
@@ -1584,12 +1562,6 @@ NetLogo 6.0.4
       <value value="&quot;bandafassi&quot;"/>
       <value value="&quot;ndorna&quot;"/>
       <value value="&quot;makacoulibantang&quot;"/>
-      <value value="&quot;scale_free&quot;"/>
-      <value value="&quot;lattice&quot;"/>
-      <value value="&quot;wheel&quot;"/>
-      <value value="&quot;scale_free_random&quot;"/>
-      <value value="&quot;lattice_random&quot;"/>
-      <value value="&quot;wheel_random&quot;"/>
     </enumeratedValueSet>
     <steppedValueSet variable="roads-investment" first="50" step="50" last="500"/>
     <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
