@@ -6,14 +6,12 @@ roads-own [
   my-patches
   my-length
   my-paved
-  my-min-start-distance
   my-avoided-flood-sum
   my-avoided-flood-proportion
   my-max-storage
   my-max-villages
   my-criteria-sum
   my-roads-ID
-  roadsConnected?
 ]
 
 globals [
@@ -21,22 +19,17 @@ globals [
   people-per-household
   yield-connected
   yield-disconnected
-  travel-distance
   irrigated-elevation
   flood-risk-elevation
   initial-population
-  population-growth-rate
   hectares-per-cell
   cells-per-km
   farms-dataset
   roadsID-dataset
   roadsPaved-dataset
   storageCapacity-dataset
-  farm-probability-dataset
   hand-dataset
   excluded-classes-dataset
-  initialPavedRatio
-  networkSpeed
   walking-distance
   world_raster
   simulation_complete
@@ -49,10 +42,10 @@ globals [
   crop-quantity
   remaining-roads-budget
   villages-along-paved
-  total-storage-added
   crops-per-person
   initial-farm-count
   storage-connected
+  crop-expansion
 ]
 
 patches-own [
@@ -85,7 +78,6 @@ patches-own [
   farmConnected?
   farmCounted?
   eligibleVillagePatchNearRoad?
-  nextToRoad?
 ]
 
 turtles-own [
@@ -95,49 +87,56 @@ turtles-own [
   homeVillages
 ]
 
+; reorder sub procedures to match the order
+; in the setup and go procedures
+
 to setup
   clear-all
-  ; initial variables
+  ; initialize variables
   set-community-variables
   recalculate-variables
-  ; spatial data
+  ; add spatial data
   read-spatial-data
   load-and-display-spatial-data
-  ; population growth
+  ; grow population
   create-population
-  ; crop expansion
+  ; expand cropland
   calculate-crop-quantity
   calculate-crops-per-person
-  calculate-village-distance
-  check-villages-connected
-  check-farms-connected
-  ; road upgrades
+  ; upgrade roads
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
+  calculate-road-flood-risk
   calculate-road-length
   reset-ticks
   set simulation_complete false
 end
 
 to go
-  ; turn on when mapping results
+  ; export maps
 ;  export-world-raster
-  ; intial variables
   show-year
+  ; initialize variables
   recalculate-variables
-  ; population growth
+  ; grow population
   grow-population
-  ; crop expansion
+  ; expand cropland
+  check-villages-connected
+  check-potential-farms-connected
   calculate-village-distance
   calculate-farmProbability
   expand-farms
-  calculate-road-flood-risk
-  add-villages
+  ; add storage
   add-storageCapacity
   report-storageCapacity
+  calculate-crop-expansion
+  ; add villages
+  add-villages
+  ; upgrade roads
+  ; recalculate storage along roads as
+  ; more storage added
   compute-manhattan-distances-back-go
   normalize-criteria-values
-;  check-roads-connected
   pave-roads
   ; including the below procedure in the go procedure
   ; is necessary for new paved roads to mostly connect
@@ -145,12 +144,9 @@ to go
   compute-manhattan-distances-out
   count-villages-along-paved
   count-storage-connected
-  calculate-total-storage-added-each-tick
-  check-villages-connected
-  check-farms-connected
   tick
   if (ticks = 17) [ stop ]
-;  if (simulation_complete = true) [ stop ]
+  ;  if (simulation_complete = true) [ stop ]
 end
 
 to set-community-variables
@@ -645,15 +641,12 @@ to compute-manhattan-distance-back-one-step-setup
       if any? neighbors4 with [ roadsPaved = 0 ] [
         let minPatch min-one-of neighbors4 with [ roadsPaved = 0  ] [ roadStartDistance ]
         ask minPatch [
-          ;        if not any? turtles-here [
           sprout 1 [
             set distanceTurtle? true
             set size 5
             set homeSilos nextSilos
             set homeVillages nextVillages
-            ;                      set hidden? true
           ]
-          ;        ]
         ]
       ]
     ]
@@ -718,14 +711,12 @@ to compute-manhattan-distance-back-one-step-go
       if any? neighbors4 with [ roadsPaved = 0 ] [
         let minPatch min-one-of neighbors4 with [ roadsPaved = 0  ] [ roadStartDistance ]
         ask minPatch [
-          ;        if not any? turtles-here [
           sprout 1 [
             set distanceTurtle? true
             set size 5
             set homeSilos nextSilos
             set hidden? true
           ]
-          ;        ]
         ]
       ]
     ]
@@ -746,9 +737,6 @@ to normalize-criteria-values
       ] [
         set normalizedSilosAlongRoads 0
       ]
-;      if ( silosAlongRoads > 0 ) [
-;        set normalizedSilosAlongRoads ( 1 - normalizedSilosAlongRoads )
-;      ]
       ifelse ( maxVillagesAlongRoads > 0 ) [
         set normalizedVillagesAlongRoads precision (villagesAlongRoads / maxVillagesAlongRoads) 3
       ] [
@@ -781,12 +769,6 @@ to normalize-criteria-values
 end
 
 to pave-roads
-
-;  ask roads [
-;    if my-length > 0 [
-;      set my-min-start-distance min [ roadStartDistance ] of my-patches
-;    ]
-;  ]
 
   ifelse ( count roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) ] > 0 ) [
 
@@ -873,12 +855,6 @@ to count-storage-connected
 
 end
 
-to calculate-total-storage-added-each-tick
-
-  set total-storage-added sum [ storageCapacity - initialStorage ] of patches with [ storageCapacity >= 0 ]
-
-end
-
 to calculate-total-storage-added
 
   ask patches with [ storageCapacity >= 0 ] [
@@ -894,7 +870,7 @@ to check-villages-connected
   ]
 end
 
-to check-farms-connected
+to check-potential-farms-connected
   ask patches with [ storageCapacity >= 0 and villageConnected? = true ] [
     ask patches in-radius walking-distance [
       set farmConnected? true
@@ -902,21 +878,8 @@ to check-farms-connected
   ]
 end
 
-to check-roads-connected
-  ask roads [
-    ask my-patches [
-      if any? neighbors with [ roadsPaved = 1 ] [ set nextToRoad? true ]
-    ]
-    if any? my-patches with [ nextToRoad? = true ] [ set roadsConnected? true ]
-  ]
-;  ask roads [
-;    if roadsConnected? = true and my-paved = 0 [
-;      show my-max-villages
-;      show my-max-storage
-;      let randomColor random 100
-;      ask my-patches [ set pcolor randomColor ]
-;    ]
-;  ]
+to calculate-crop-expansion
+  set crop-expansion ( count patches with [ farm > 0 ] - initial-farm-count ) * hectares-per-cell
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -1126,7 +1089,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 0 -16777216 true "" "plot ( count patches with [ farm > 0 ] - initial-farm-count ) * hectares-per-cell"
+"default" 1.0 0 -16777216 true "" "plot crop-expansion"
 
 MONITOR
 1666
@@ -1134,7 +1097,7 @@ MONITOR
 1792
 227
 Crop expansion (ha)
-( count patches with [ farm > 0 ] - initial-farm-count ) * hectares-per-cell
+crop-expansion
 0
 1
 11
