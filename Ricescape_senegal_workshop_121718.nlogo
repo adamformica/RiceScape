@@ -93,7 +93,7 @@ turtles-own [
 to setup
   clear-all
   ; initialize variables
-  set-community-variables
+  set-environment-variables
   recalculate-variables
   ; add spatial data
   read-spatial-data
@@ -149,7 +149,7 @@ to go
   ;  if (simulation_complete = true) [ stop ]
 end
 
-to set-community-variables
+to set-environment-variables
   set hectares-per-household 1.5
   set people-per-household 10
   ;  tons per hectare
@@ -159,7 +159,7 @@ to set-community-variables
   set irrigated-elevation 3
   set flood-risk-elevation 5
 
-  if ( community = "bandafassi" or ( community != "makacoulibantang" and community != "ndorna" ) ) [
+  if ( environment = "bandafassi" or ( environment != "makacoulibantang" and environment != "ndorna" ) ) [
     set initial-population 12000
     ;    percent per year
     set population-growth 0.035
@@ -167,7 +167,7 @@ to set-community-variables
     set cells-per-km 4
   ]
 
-  if ( community = "makacoulibantang" ) [
+  if ( environment = "makacoulibantang" ) [
     set initial-population 42000
     ;    percent per year
     set population-growth 0.029
@@ -175,7 +175,7 @@ to set-community-variables
     set cells-per-km 5
   ]
 
-  if ( community = "ndorna" ) [
+  if ( environment = "ndorna" ) [
     set initial-population 13000
     ;    percent per year
     set population-growth 0.026
@@ -196,13 +196,13 @@ to recalculate-variables
 end
 
 to read-spatial-data
-  set farms-dataset gis:load-dataset (word community "_data/" community "_EO_cropland.asc")
-  set roadsID-dataset gis:load-dataset (word community "_data/" community "_roads_ID.asc")
-  set roadsPaved-dataset gis:load-dataset (word community "_data/" community "_roads_paved.asc")
-  set storageCapacity-dataset gis:load-dataset (word community "_data/storage_" community "_capacity.asc")
-  set hand-dataset gis:load-dataset (word community "_data/" community "_hand.asc")
-  set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_EO_trees.asc")
-;  set excluded-classes-dataset gis:load-dataset (word community "_data/" community "_excluded_classes.asc")
+  set farms-dataset gis:load-dataset (word environment "_data/" environment "_EO_cropland.asc")
+  set roadsID-dataset gis:load-dataset (word environment "_data/" environment "_roads_ID.asc")
+  set roadsPaved-dataset gis:load-dataset (word environment "_data/" environment "_roads_paved.asc")
+  set storageCapacity-dataset gis:load-dataset (word environment "_data/storage_" environment "_capacity.asc")
+  set hand-dataset gis:load-dataset (word environment "_data/" environment "_hand.asc")
+  set excluded-classes-dataset gis:load-dataset (word environment "_data/" environment "_EO_trees.asc")
+;  set excluded-classes-dataset gis:load-dataset (word environment "_data/" environment "_excluded_classes.asc")
 end
 
 to load-and-display-spatial-data
@@ -221,7 +221,7 @@ to display-excluded-classes
     [ set excludedClasses excludedClasses ]
     [ set excludedClasses -1 ]
   ]
-  if (community = "makacoulibantang") [
+  if (environment = "makacoulibantang") [
     ask patches with [ pycor < -112 ] [
       set excludedClasses 2
     ]
@@ -750,7 +750,7 @@ to normalize-criteria-values
         set my-avoided-flood-proportion my-avoided-flood-sum / my-length
         ; necessary or else not all villages will get connected in the senegal communities
         ; because of villages along road segments instead of at the ends
-        ifelse ( community = "bandafassi" or community = "makacoulibantang" or community = "ndorna" ) [
+        ifelse ( environment = "bandafassi" or environment = "makacoulibantang" or environment = "ndorna" ) [
           set my-max-storage max [ normalizedSilosAlongRoads ] of my-patches
           set my-max-villages max [ normalizedVillagesAlongRoads ] of my-patches
         ] [
@@ -833,7 +833,7 @@ end
 
 to export-world-raster
   set world_raster gis:patch-dataset pcolor
-  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_maps/world_raster_export_files_" community "/world_raster_export" )
+  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_maps/world_raster_export_files_" environment "/world_raster_export" )
   gis:store-dataset world_raster word directory ticks
 end
 
@@ -1033,8 +1033,8 @@ CHOOSER
 72
 228
 117
-community
-community
+environment
+environment
 "bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
 5
 
