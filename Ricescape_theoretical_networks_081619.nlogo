@@ -70,7 +70,6 @@ to make-layers
   if ( structure = "scale_free" or structure = "scale_free_random" ) [
     random-seed 56
     nw:generate-preferential-attachment nodes links 25 1
-;    repeat 1000 [ layout-spring nodes links 1 40 150 ]
     let root-agent max-one-of turtles [ count my-links ]
     layout-radial turtles links root-agent
     set distanceRatio 1.5
@@ -78,7 +77,6 @@ to make-layers
   if ( structure = "wheel" or structure = "wheel_random" ) [
     random-seed 103
     nw:generate-wheel nodes links 25
-;    repeat 1000 [ layout-spring nodes links 0.5 20 500 ]
     let root-agent max-one-of turtles [ count my-links ]
     layout-radial turtles links root-agent
     set distanceRatio 1.5
@@ -143,7 +141,7 @@ to make-layers
   ask patches with [ roadsPaved = 0 and storageCapacity = -1 ] [
     if count neighbors4 with [ roadsPaved != 0 ] = 3 [
       ask neighbors4 with [ roadsPaved != 0 ] [
-        set pcolor yellow
+        set pcolor brown
         set roadsPaved 0
         set roadStartDistance 999999
         set roadsID max [ roadsID ] of neighbors4
