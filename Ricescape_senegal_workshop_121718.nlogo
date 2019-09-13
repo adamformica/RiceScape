@@ -110,7 +110,6 @@ to setup
   compute-manhattan-distances-back-setup
   calculate-road-flood-risk
   calculate-road-length
-  color-silosAlongRoads
   reset-ticks
   set simulation_complete false
 end
@@ -141,7 +140,6 @@ to go
   compute-manhattan-distances-back-go
   normalize-criteria-values
   check-roads-connected
-  color-silosAlongRoads
   pave-roads
   ; including the below procedure in the go procedure
   ; is necessary for new paved roads to mostly connect
@@ -895,16 +893,6 @@ to check-roads-connected
     if any? my-patches with [ nextToRoad? = true ] [ set roadsConnected? true ]
   ]
 end
-
-to color-silosAlongRoads
-  let maxSilosAlongRoads max [ silosAlongRoads ] of patches with [ roadsID >= 0 ]
-  show maxSilosAlongRoads
-  let minSilosAlongRoads min [ silosAlongRoads ] of patches with [ roadsID >= 0 ]
-  show minSilosAlongRoads
-  ask patches with [ roadsID >= 0 and roadsPaved = 0 ] [
-    set pcolor scale-color yellow silosAlongRoads ( minSilosAlongRoads + 0.1 * maxSilosAlongRoads ) maxSilosAlongRoads
-  ]
-end
 @#$#@#$#@
 GRAPHICS-WINDOW
 303
@@ -983,7 +971,7 @@ roads-investment
 roads-investment
 0
 500
-250.0
+400.0
 25
 1
 million CFA
@@ -1060,7 +1048,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-8
+0
 
 PLOT
 1448
@@ -1534,7 +1522,7 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="investment_levels" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="investment_levels" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="17"/>
@@ -1542,10 +1530,7 @@ NetLogo 6.0.4
     <metric>villages-along-paved</metric>
     <metric>storage-connected</metric>
     <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
-    <enumeratedValueSet variable="file-path">
-      <value value="&quot;C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape&quot;"/>
-    </enumeratedValueSet>
-    <enumeratedValueSet variable="community">
+    <enumeratedValueSet variable="environment">
       <value value="&quot;bandafassi&quot;"/>
       <value value="&quot;ndorna&quot;"/>
       <value value="&quot;makacoulibantang&quot;"/>
