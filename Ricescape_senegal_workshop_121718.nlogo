@@ -890,7 +890,7 @@ end
 to check-roads-connected
   ask roads [
     ask my-patches [
-      if any? neighbors in-radius 10 with [ roadsPaved = 1 ] [ set nextToRoad? true ]
+      if any? patches in-radius 5 with [ roadsPaved = 1 ] [ set nextToRoad? true ]
     ]
     if any? my-patches with [ nextToRoad? = true ] [ set roadsConnected? true ]
   ]
@@ -1060,7 +1060,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-4
+8
 
 PLOT
 1448
