@@ -1177,23 +1177,6 @@ population-current
 1
 11
 
-BUTTON
-36
-744
-423
-777
-NIL
-repeat 10 [ compute-manhattan-distance-back-one-step-setup ]
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
 @#$#@#$#@
 ## WHAT IS IT?
 
