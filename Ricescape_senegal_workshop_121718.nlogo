@@ -110,6 +110,7 @@ to setup
   compute-manhattan-distances-back-setup
   calculate-road-flood-risk
   calculate-road-length
+  color-silosAlongRoads
   reset-ticks
   set simulation_complete false
 end
@@ -140,6 +141,7 @@ to go
   compute-manhattan-distances-back-go
   normalize-criteria-values
   check-roads-connected
+  color-silosAlongRoads
   pave-roads
   ; including the below procedure in the go procedure
   ; is necessary for new paved roads to mostly connect
@@ -888,9 +890,19 @@ end
 to check-roads-connected
   ask roads [
     ask my-patches [
-      if any? neighbors in-radius 5 with [ roadsPaved = 1 ] [ set nextToRoad? true ]
+      if any? neighbors in-radius 10 with [ roadsPaved = 1 ] [ set nextToRoad? true ]
     ]
     if any? my-patches with [ nextToRoad? = true ] [ set roadsConnected? true ]
+  ]
+end
+
+to color-silosAlongRoads
+  let maxSilosAlongRoads max [ silosAlongRoads ] of patches with [ roadsID >= 0 ]
+  show maxSilosAlongRoads
+  let minSilosAlongRoads min [ silosAlongRoads ] of patches with [ roadsID >= 0 ]
+  show minSilosAlongRoads
+  ask patches with [ roadsID >= 0 and roadsPaved = 0 ] [
+    set pcolor scale-color yellow silosAlongRoads ( minSilosAlongRoads + 0.1 * maxSilosAlongRoads ) maxSilosAlongRoads
   ]
 end
 @#$#@#$#@
@@ -971,7 +983,7 @@ roads-investment
 roads-investment
 0
 500
-50.0
+250.0
 25
 1
 million CFA
@@ -1048,7 +1060,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-8
+4
 
 PLOT
 1448
