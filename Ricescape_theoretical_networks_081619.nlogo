@@ -362,7 +362,7 @@ CHOOSER
 structure
 structure
 "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-5
+1
 
 BUTTON
 41

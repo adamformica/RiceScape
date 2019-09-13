@@ -110,6 +110,7 @@ to setup
   compute-manhattan-distances-back-setup
   calculate-road-flood-risk
   calculate-road-length
+
   reset-ticks
   set simulation_complete false
 end
@@ -147,6 +148,7 @@ to go
   compute-manhattan-distances-out
   count-villages-along-paved
   count-storage-connected
+;  color-silosAlongRoads
   tick
   if (ticks = 17) [ stop ]
   ;  if (simulation_complete = true) [ stop ]
@@ -883,6 +885,16 @@ end
 
 to calculate-crop-expansion
   set crop-expansion ( count patches with [ farm > 0 ] - initial-farm-count ) * hectares-per-cell
+end
+
+to color-silosAlongRoads
+  let maxSilosAlongRoads max [ silosAlongRoads ] of patches with [ roadsID >= 0 ]
+  show maxSilosAlongRoads
+  let minSilosAlongRoads min [ silosAlongRoads ] of patches with [ roadsID >= 0 ]
+  show minSilosAlongRoads
+  ask patches with [ roadsID >= 0 ] [
+    set pcolor scale-color yellow silosAlongRoads ( minSilosAlongRoads + 0.1 * maxSilosAlongRoads ) maxSilosAlongRoads
+  ]
 end
 
 to check-roads-connected
