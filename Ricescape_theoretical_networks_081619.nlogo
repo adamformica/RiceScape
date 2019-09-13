@@ -5,9 +5,10 @@ breed [ dummies dummy ]
 breed [ distanceCounters distanceCounter ]
 
 globals [
-  farm-radius
   maxCommunitySize
   distanceRatio
+  cells-per-km
+  walking-distance
 ]
 
 patches-own [
@@ -43,7 +44,6 @@ links-own [
 
 to setup
   clear-all
-  set farm-radius 10
   make-layers
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
@@ -54,33 +54,34 @@ end
 
 to make-layers
   ; set up GIS with extent of Bandafassi
-  let file-path "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape"
   let community "bandafassi"
-  set-current-directory file-path
   let farms-dataset gis:load-dataset (word community "_data/" community "_EO_cropland.asc")
   gis:set-world-envelope (gis:envelope-of farms-dataset)
+
+  set cells-per-km 4
+  set walking-distance round 4 * cells-per-km
 
   ; create network
   if ( structure = "lattice" or structure = "lattice_random" ) [
     random-seed 2
     nw:generate-lattice-2d nodes links 5 5 false
     repeat 1000 [ layout-spring nodes links 1 35 1000 ]
-    set distanceRatio 1.5
   ]
   if ( structure = "scale_free" or structure = "scale_free_random" ) [
     random-seed 56
     nw:generate-preferential-attachment nodes links 25 1
     let root-agent max-one-of turtles [ count my-links ]
     layout-radial turtles links root-agent
-    set distanceRatio 1.5
   ]
   if ( structure = "wheel" or structure = "wheel_random" ) [
     random-seed 103
     nw:generate-wheel nodes links 25
     let root-agent max-one-of turtles [ count my-links ]
     layout-radial turtles links root-agent
-    set distanceRatio 1.5
   ]
+
+  ; set distance ratio for out-of-the-way farms
+  set distanceRatio 1.5
 
   ; hide network links and nodes
   ask nodes [
@@ -177,16 +178,16 @@ end
 to make-farms
   ask nodes [
     let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
-    let patchesCount count eligibleFarmPatches in-radius farm-radius
+    let patchesCount count eligibleFarmPatches in-radius walking-distance
     ifelse ( structure = "scale_free" or structure = "lattice" or structure = "wheel" ) [
       if ( ( distanceToPaved * distanceRatio ) < roadStartDistance and villagesAlongRoads = 0 and not any? neighbors with [ roadsPaved = 1 ] ) [
-        ask n-of patchesCount eligibleFarmPatches in-radius farm-radius [
+        ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
           set pcolor green
           set farm 1
         ]
       ]
     ] [
-      ask n-of random patchesCount eligibleFarmPatches in-radius farm-radius [
+      ask n-of random patchesCount eligibleFarmPatches in-radius walking-distance [
         set pcolor green
         set farm 1
       ]
@@ -362,7 +363,7 @@ CHOOSER
 structure
 structure
 "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-1
+5
 
 BUTTON
 41
