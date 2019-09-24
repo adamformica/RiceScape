@@ -971,7 +971,7 @@ roads-investment
 roads-investment
 0
 500
-400.0
+150.0
 25
 1
 million CFA
@@ -1048,7 +1048,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-0
+3
 
 PLOT
 1448
@@ -1522,7 +1522,7 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="investment_levels" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="investment_levels" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="17"/>

@@ -5,10 +5,11 @@ breed [ dummies dummy ]
 breed [ distanceCounters distanceCounter ]
 
 globals [
-  maxCommunitySize
   distanceRatio
   cells-per-km
   walking-distance
+  ideal-segment-length
+  road-network-size
 ]
 
 patches-own [
@@ -33,9 +34,8 @@ distanceCounters-own [
   homeVillages
 ]
 
-turtles-own [
-  communityMembers
-  communitySize
+nodes-own [
+  nextToPaved?
 ]
 
 links-own [
@@ -47,6 +47,7 @@ to setup
   make-layers
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
+  check-next-to-paved
   calculate-node-distances
   make-farms
   add-storageCapacity
@@ -78,6 +79,9 @@ to make-layers
     nw:generate-wheel nodes links 25
     let root-agent max-one-of turtles [ count my-links ]
     layout-radial turtles links root-agent
+  ]
+  if ( structure = "radial" ) [
+    setup-radial
   ]
 
   ; set distance ratio for out-of-the-way farms
@@ -175,12 +179,56 @@ to make-layers
   ]
 end
 
+;setup-radial and finish-setup adapted from
+;Road Network Builder https://ccl.northwestern.edu/rp/cities/road.shtml
+
+to setup-radial
+  set road-network-size 5
+  set ideal-segment-length world-width / (road-network-size + 1)
+  let current-radius ideal-segment-length
+  let current-theta 0
+  let current-perimeter 2 * PI * current-radius
+  while  [ current-radius < world-width * sqrt(2) / 2 ]
+  [
+    create-nodes 1
+    [
+      let done? false
+      while [ not done? ]
+      [
+        if( current-theta >= 359)
+        [
+          set current-radius current-radius + ideal-segment-length
+          set current-perimeter 2 * current-radius * PI
+          set current-theta 0 ; (current-theta mod 360)
+
+          if (current-radius >= world-width * sqrt(2) / 2)
+          [ set done? true ]
+        ]
+        set heading current-theta
+        if (can-move? (current-radius + 1))
+        [
+          fd current-radius
+          set done? true
+        ]
+        set current-theta current-theta + 360 / (floor (current-perimeter / ideal-segment-length ))
+      ]
+    ]
+  ]
+  finish-setup
+end
+
+to finish-setup
+  ask nodes [
+    create-links-with other nodes in-radius (ideal-segment-length * 1.1 )
+  ]
+end
+
 to make-farms
   ask nodes [
     let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
     let patchesCount count eligibleFarmPatches in-radius walking-distance
-    ifelse ( structure = "scale_free" or structure = "lattice" or structure = "wheel" ) [
-      if ( ( distanceToPaved * distanceRatio ) < roadStartDistance and villagesAlongRoads = 0 and not any? neighbors with [ roadsPaved = 1 ] ) [
+    ifelse ( structure = "scale_free" or structure = "lattice" or structure = "wheel" or structure = "radial" ) [
+      if ( ( distanceToPaved * distanceRatio ) < roadStartDistance ) [
         ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
           set pcolor green
           set farm 1
@@ -206,11 +254,18 @@ to add-storageCapacity
   ]
 end
 
+to check-next-to-paved
+  ask nodes with [ any? neighbors with [ roadsPaved > 0 ] ] [
+    set nextToPaved? true
+  ]
+end
+
 to calculate-node-distances
-  if count nodes with [ roadsPaved > 0 ] > 0 [
-    let maxX max [ pxcor ] of nodes with [ roadsPaved > 0 ]
+  if count nodes with [ nextToPaved? = true ] > 0 [
+    let maxX max [ pxcor ] of nodes with [ nextToPaved? = true ]
+    let maxY max [ pycor ] of nodes with [ nextToPaved? = true and pxcor = maxX ]
     ask nodes [
-      set distanceToPaved distance one-of nodes with [ roadsPaved > 0 and pxcor = maxX ]
+      set distanceToPaved distance one-of nodes with [ nextToPaved? = true and pxcor = maxX and pycor = maxY ]
     ]
   ]
 end
@@ -362,8 +417,8 @@ CHOOSER
 125
 structure
 structure
-"scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-5
+"scale_free" "lattice" "wheel" "radial" "scale_free_random" "lattice_random" "wheel_random"
+0
 
 BUTTON
 41
