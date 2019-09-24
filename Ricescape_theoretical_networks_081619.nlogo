@@ -37,6 +37,10 @@ distanceCounters-own [
 
 nodes-own [
   nextToPaved?
+  node-x
+  node-y
+  original-xcor
+  original-ycor
 ]
 
 links-own [
@@ -66,10 +70,12 @@ to make-layers
   set walking-distance round 4 * cells-per-km
 
   ; create network
-  if ( structure = "lattice" or structure = "lattice_random" ) [
-    random-seed 2
-    nw:generate-lattice-2d nodes links 5 5 false
-    repeat 1000 [ layout-spring nodes links 1 35 1000 ]
+  if ( structure = "grid" or structure = "grid_random" ) [
+;    random-seed 2
+;    random-seed 1
+;    nw:generate-lattice-2d nodes links 5 5 false
+;    repeat 1000 [ layout-spring nodes links 1 35 1000 ]
+    setup-grid
   ]
   if ( structure = "radial" ) [
     setup-radial
@@ -82,7 +88,7 @@ to make-layers
   ]
 
   ; set distance ratio for out-of-the-way farms
-  set distanceRatio 1.75
+  set distanceRatio 1.1
 
   ; hide network links and nodes
   ask nodes [
@@ -179,7 +185,7 @@ to make-layers
   ]
 end
 
-;setup-radial and finish-setup adapted from
+;setup-radial, setup-grid, and finish-setup adapted from
 ;Road Network Builder https://ccl.northwestern.edu/rp/cities/road.shtml
 
 to setup-radial
@@ -217,6 +223,21 @@ to setup-radial
   finish-setup
 end
 
+to setup-grid
+  set road-network-size 5
+  set ideal-segment-length world-width / (road-network-size + 1)
+  let n 0
+  create-nodes road-network-size * road-network-size
+  [
+    set node-y (floor (n / road-network-size))
+    set node-x (n mod road-network-size)
+    set xcor min-pxcor - 0.5 + (world-width ) * (node-x + 1) / (road-network-size + 1)
+    set ycor min-pycor - 0.5 + (world-height ) * (node-y + 1) / (road-network-size + 1 )
+    set n (n + 1)
+  ]
+  finish-setup
+end
+
 to finish-setup
   ask nodes [
     create-links-with other nodes in-radius (ideal-segment-length * 1.1 )
@@ -227,7 +248,7 @@ to make-farms
   ask nodes [
     let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
     let patchesCount count eligibleFarmPatches in-radius walking-distance
-    ifelse ( structure = "lattice" or structure = "radial" or structure = "random" ) [
+    ifelse ( structure = "grid" or structure = "radial" or structure = "random" ) [
       if ( roadStartDistance < 999999 ) [
         if ( ( distanceToPaved * distanceRatio ) < roadStartDistance ) [
           ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
@@ -419,8 +440,8 @@ CHOOSER
 125
 structure
 structure
-"lattice" "radial" "random" "lattice_random"
-2
+"grid" "radial" "random" "lattice_random"
+0
 
 BUTTON
 41
