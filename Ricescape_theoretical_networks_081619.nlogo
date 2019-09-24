@@ -71,10 +71,6 @@ to make-layers
 
   ; create network
   if ( structure = "grid" or structure = "grid_random" ) [
-;    random-seed 2
-;    random-seed 1
-;    nw:generate-lattice-2d nodes links 5 5 false
-;    repeat 1000 [ layout-spring nodes links 1 35 1000 ]
     setup-grid
   ]
   if ( structure = "radial" ) [
