@@ -71,18 +71,6 @@ to make-layers
     nw:generate-lattice-2d nodes links 5 5 false
     repeat 1000 [ layout-spring nodes links 1 35 1000 ]
   ]
-  if ( structure = "scale_free" or structure = "scale_free_random" ) [
-    random-seed 56
-    nw:generate-preferential-attachment nodes links 25 1
-    let root-agent max-one-of nodes [ count my-links ]
-    layout-radial nodes links root-agent
-  ]
-  if ( structure = "wheel" or structure = "wheel_random" ) [
-    random-seed 103
-    nw:generate-wheel nodes links 25
-    let root-agent max-one-of nodes [ count my-links ]
-    layout-radial nodes links root-agent
-  ]
   if ( structure = "radial" ) [
     setup-radial
   ]
@@ -94,7 +82,7 @@ to make-layers
   ]
 
   ; set distance ratio for out-of-the-way farms
-  set distanceRatio 1.25
+  set distanceRatio 1.75
 
   ; hide network links and nodes
   ask nodes [
@@ -195,7 +183,7 @@ end
 ;Road Network Builder https://ccl.northwestern.edu/rp/cities/road.shtml
 
 to setup-radial
-  set road-network-size 5
+  set road-network-size 4
   set ideal-segment-length world-width / (road-network-size + 1)
   let current-radius ideal-segment-length
   let current-theta 0
@@ -239,7 +227,7 @@ to make-farms
   ask nodes [
     let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
     let patchesCount count eligibleFarmPatches in-radius walking-distance
-    ifelse ( structure = "scale_free" or structure = "lattice" or structure = "wheel" or structure = "radial" or structure = "random" ) [
+    ifelse ( structure = "lattice" or structure = "radial" or structure = "random" ) [
       if ( roadStartDistance < 999999 ) [
         if ( ( distanceToPaved * distanceRatio ) < roadStartDistance ) [
           ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
@@ -431,8 +419,8 @@ CHOOSER
 125
 structure
 structure
-"scale_free" "lattice" "wheel" "radial" "random" "scale_free_random" "lattice_random" "wheel_random"
-4
+"lattice" "radial" "random" "lattice_random"
+2
 
 BUTTON
 41
