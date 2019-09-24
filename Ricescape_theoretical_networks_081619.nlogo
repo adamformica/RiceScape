@@ -25,6 +25,7 @@ patches-own [
   silosAlongRoads
   villagesAlongRoads
   distanceToPaved
+  XYSum
 ]
 
 distanceCounters-own [
@@ -44,6 +45,7 @@ links-own [
 
 to setup
   clear-all
+  set-current-plot "Degree distribution"
   make-layers
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
@@ -51,6 +53,7 @@ to setup
   calculate-node-distances
   make-farms
   add-storageCapacity
+  update-plots
 end
 
 to make-layers
@@ -71,21 +74,27 @@ to make-layers
   if ( structure = "scale_free" or structure = "scale_free_random" ) [
     random-seed 56
     nw:generate-preferential-attachment nodes links 25 1
-    let root-agent max-one-of turtles [ count my-links ]
-    layout-radial turtles links root-agent
+    let root-agent max-one-of nodes [ count my-links ]
+    layout-radial nodes links root-agent
   ]
   if ( structure = "wheel" or structure = "wheel_random" ) [
     random-seed 103
     nw:generate-wheel nodes links 25
-    let root-agent max-one-of turtles [ count my-links ]
-    layout-radial turtles links root-agent
+    let root-agent max-one-of nodes [ count my-links ]
+    layout-radial nodes links root-agent
   ]
   if ( structure = "radial" ) [
     setup-radial
   ]
+  if ( structure = "random" ) [
+;    random-seed 1
+    nw:generate-random nodes links 50 0.03
+    let root-agent max-one-of nodes [ count my-links ]
+    layout-radial nodes links root-agent
+  ]
 
   ; set distance ratio for out-of-the-way farms
-  set distanceRatio 1.5
+  set distanceRatio 1.25
 
   ; hide network links and nodes
   ask nodes [
@@ -155,8 +164,11 @@ to make-layers
   ]
 
   ; pave road patches
-  let maxX max [ pxcor ] of patches with [ roadsID > 0 ]
-  let maxRoadsID one-of [ roadsID ] of patches with [ roadsID > 0 and pxcor = maxX ]
+  ask patches with [ roadsID > 0 ] [
+    set XYSum pxcor + pycor
+  ]
+  let maxXYSum max [ XYSum ] of patches with [ roadsID > 0 ]
+  let maxRoadsID one-of [ roadsID ] of patches with [ roadsID > 0 and XYSum = maxXYSum ]
   ask patches with [ roadsID = maxRoadsID ] [
     set pcolor gray
     set roadsPaved 1
@@ -227,11 +239,13 @@ to make-farms
   ask nodes [
     let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
     let patchesCount count eligibleFarmPatches in-radius walking-distance
-    ifelse ( structure = "scale_free" or structure = "lattice" or structure = "wheel" or structure = "radial" ) [
-      if ( ( distanceToPaved * distanceRatio ) < roadStartDistance ) [
-        ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
-          set pcolor green
-          set farm 1
+    ifelse ( structure = "scale_free" or structure = "lattice" or structure = "wheel" or structure = "radial" or structure = "random" ) [
+      if ( roadStartDistance < 999999 ) [
+        if ( ( distanceToPaved * distanceRatio ) < roadStartDistance ) [
+          ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
+            set pcolor green
+            set farm 1
+          ]
         ]
       ]
     ] [
@@ -417,8 +431,8 @@ CHOOSER
 125
 structure
 structure
-"scale_free" "lattice" "wheel" "radial" "scale_free_random" "lattice_random" "wheel_random"
-0
+"scale_free" "lattice" "wheel" "radial" "random" "scale_free_random" "lattice_random" "wheel_random"
+4
 
 BUTTON
 41
@@ -453,6 +467,35 @@ NIL
 NIL
 NIL
 1
+
+PLOT
+4
+205
+204
+355
+Degree distribution
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 1 -16777216 true "" "histogram [ count my-links ] of turtles"
+
+MONITOR
+22
+386
+79
+431
+Villages
+count patches with [ storageCapacity >= 0 ]
+17
+1
+11
 
 @#$#@#$#@
 ## WHAT IS IT?
