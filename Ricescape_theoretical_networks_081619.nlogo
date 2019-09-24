@@ -53,7 +53,6 @@ to setup
   make-layers
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
-  check-next-to-paved
   calculate-node-distances
   make-farms
   add-storageCapacity
@@ -275,18 +274,12 @@ to add-storageCapacity
   ]
 end
 
-to check-next-to-paved
-  ask nodes with [ any? neighbors with [ roadsPaved > 0 ] ] [
-    set nextToPaved? true
-  ]
-end
-
 to calculate-node-distances
-  if count nodes with [ nextToPaved? = true ] > 0 [
-    let maxX max [ pxcor ] of nodes with [ nextToPaved? = true ]
-    let maxY max [ pycor ] of nodes with [ nextToPaved? = true and pxcor = maxX ]
+  if count nodes with [ roadsPaved > 0 ] > 0 [
+    let maxX max [ pxcor ] of nodes with [ roadsPaved > 0 ]
+    let maxY max [ pycor ] of nodes with [ roadsPaved > 0 and pxcor = maxX ]
     ask nodes [
-      set distanceToPaved distance one-of nodes with [ nextToPaved? = true and pxcor = maxX and pycor = maxY ]
+      set distanceToPaved distance one-of nodes with [ roadsPaved > 0 and pxcor = maxX and pycor = maxY ]
     ]
   ]
 end
@@ -439,7 +432,7 @@ CHOOSER
 structure
 structure
 "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-5
+2
 
 BUTTON
 41
