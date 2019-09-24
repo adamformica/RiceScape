@@ -70,17 +70,17 @@ to make-layers
   set walking-distance round 4 * cells-per-km
 
   ; create network
-  if ( structure = "grid" or structure = "grid_random" ) [
+  if ( structure = "grid" or structure = "grid_distributed" ) [
     random-seed 0
     setup-grid
     set distanceRatio 1.1
   ]
-  if ( structure = "radial" or structure = "radial_random" ) [
+  if ( structure = "radial" or structure = "radial_distributed" ) [
     random-seed 0
     setup-radial
     set distanceRatio 1.25
   ]
-  if ( structure = "random" or structure = "random_random" ) [
+  if ( structure = "random" or structure = "random_distributed" ) [
     random-seed 14
     nw:generate-random nodes links 50 0.03
     let root-agent max-one-of nodes [ count my-links ]
@@ -434,12 +434,12 @@ ticks
 CHOOSER
 39
 80
-194
+195
 125
 structure
 structure
-"grid" "radial" "random" "grid_random" "radial_random" "random_random"
-1
+"grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
+5
 
 BUTTON
 41

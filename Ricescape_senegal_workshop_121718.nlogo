@@ -1047,8 +1047,8 @@ CHOOSER
 117
 environment
 environment
-"bandafassi" "ndorna" "makacoulibantang" "scale_free" "lattice" "wheel" "scale_free_random" "lattice_random" "wheel_random"
-3
+"bandafassi" "ndorna" "makacoulibantang" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
+0
 
 PLOT
 1448
