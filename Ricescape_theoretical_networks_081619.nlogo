@@ -71,20 +71,22 @@ to make-layers
 
   ; create network
   if ( structure = "grid" or structure = "grid_random" ) [
+    random-seed 0
     setup-grid
+    set distanceRatio 1.1
   ]
-  if ( structure = "radial" ) [
+  if ( structure = "radial" or structure = "radial_random" ) [
+    random-seed 0
     setup-radial
+    set distanceRatio 1.25
   ]
-  if ( structure = "random" ) [
-;    random-seed 1
+  if ( structure = "random" or structure = "random_random" ) [
+    random-seed 14
     nw:generate-random nodes links 50 0.03
     let root-agent max-one-of nodes [ count my-links ]
     layout-radial nodes links root-agent
+    set distanceRatio 1.75
   ]
-
-  ; set distance ratio for out-of-the-way farms
-  set distanceRatio 1.1
 
   ; hide network links and nodes
   ask nodes [
@@ -436,8 +438,8 @@ CHOOSER
 125
 structure
 structure
-"grid" "radial" "random" "lattice_random"
-0
+"grid" "radial" "random" "grid_random" "radial_random" "random_random"
+1
 
 BUTTON
 41
