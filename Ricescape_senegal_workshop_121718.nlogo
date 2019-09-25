@@ -971,7 +971,7 @@ roads-investment
 roads-investment
 0
 500
-150.0
+500.0
 25
 1
 million CFA
@@ -1034,7 +1034,7 @@ village-weight
 village-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1534,12 +1534,12 @@ NetLogo 6.0.4
       <value value="&quot;bandafassi&quot;"/>
       <value value="&quot;ndorna&quot;"/>
       <value value="&quot;makacoulibantang&quot;"/>
-      <value value="&quot;scale_free&quot;"/>
-      <value value="&quot;lattice&quot;"/>
-      <value value="&quot;wheel&quot;"/>
-      <value value="&quot;scale_free_random&quot;"/>
-      <value value="&quot;lattice_random&quot;"/>
-      <value value="&quot;wheel_random&quot;"/>
+      <value value="&quot;grid&quot;"/>
+      <value value="&quot;radial&quot;"/>
+      <value value="&quot;random&quot;"/>
+      <value value="&quot;grid_distributed&quot;"/>
+      <value value="&quot;radial_distributed&quot;"/>
+      <value value="&quot;random_distributed&quot;"/>
     </enumeratedValueSet>
     <steppedValueSet variable="roads-investment" first="50" step="50" last="500"/>
     <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
