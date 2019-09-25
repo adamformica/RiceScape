@@ -432,7 +432,7 @@ CHOOSER
 structure
 structure
 "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-2
+5
 
 BUTTON
 41
