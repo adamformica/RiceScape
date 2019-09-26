@@ -51,6 +51,7 @@ to setup
   clear-all
   set-current-plot "Degree distribution"
   make-layers
+  remove-villages
   compute-manhattan-distances-out
   compute-manhattan-distances-back-setup
   calculate-node-distances
@@ -241,30 +242,52 @@ to finish-setup
   ]
 end
 
-to make-farms
-  ask nodes [
-    let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
-    let patchesCount count eligibleFarmPatches in-radius walking-distance
-    ifelse ( structure = "grid" or structure = "radial" or structure = "random" ) [
-      if ( roadStartDistance < 999999 ) [
-        if ( ( distanceToPaved * distanceRatio ) < roadStartDistance ) [
-          ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
-            set pcolor green
-            set farm 1
-          ]
-        ]
-      ]
-    ] [
-      ask n-of random patchesCount eligibleFarmPatches in-radius walking-distance [
-        set pcolor green
-        set farm 1
-      ]
-    ]
+to remove-villages
+  random-seed new-seed
+  let villages-to-remove 1
+  let random-node-count random count nodes
+;  ask n-of random-node-count nodes [
+  ask n-of villages-to-remove nodes [
+    set pcolor brown
+    set storageCapacity -1
   ]
 end
 
+to make-farms
+  let random-village-count random count patches with [ storageCapacity >= 0 ]
+  ask n-of random-village-count patches with [ storageCapacity >= 0 ] [
+    let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
+    let patchesCount count eligibleFarmPatches in-radius walking-distance
+    ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
+      set pcolor green
+      set farm 1
+    ]
+  ]
+
+
+;  ask patches with [ storageCapacity >= 0 ] [
+;    let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
+;    let patchesCount count eligibleFarmPatches in-radius walking-distance
+;    ifelse ( structure = "grid" or structure = "radial" or structure = "random" ) [
+;      if ( roadStartDistance < 999999 ) [
+;        if ( ( distanceToPaved * distanceRatio ) < roadStartDistance ) [
+;          ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
+;            set pcolor green
+;            set farm 1
+;          ]
+;        ]
+;      ]
+;    ] [
+;      ask n-of random patchesCount eligibleFarmPatches in-radius walking-distance [
+;        set pcolor green
+;        set farm 1
+;      ]
+;    ]
+;  ]
+end
+
 to add-storageCapacity
-  ask nodes [
+  ask patches with [ storageCapacity >= 0 ] [
     let localFarmCount count patches in-radius 10 with [ farm = 1 ]
     let localProduction localFarmCount * 3
     let capacityDifference localProduction - storageCapacity
@@ -432,7 +455,7 @@ CHOOSER
 structure
 structure
 "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-5
+0
 
 BUTTON
 41

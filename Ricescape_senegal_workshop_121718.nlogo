@@ -971,7 +971,7 @@ roads-investment
 roads-investment
 0
 500
-150.0
+250.0
 25
 1
 million CFA
@@ -1019,7 +1019,7 @@ storage-weight
 storage-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1034,7 +1034,7 @@ village-weight
 village-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1048,7 +1048,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-3
+8
 
 PLOT
 1448
