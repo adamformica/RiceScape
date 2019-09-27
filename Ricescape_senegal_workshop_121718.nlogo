@@ -271,7 +271,8 @@ to display-storageCapacity
 end
 
 to remove-villages
-  random-seed new-seed
+  ; specify seed so that it's possible to recreate village/crop layout
+  random-seed seed-value
   if( environment = "grid" or environment = "radial" or environment = "random" ) [
     let random-village-count random count patches with [ storageCapacity >= 0 ]
     ask n-of random-village-count patches with [ storageCapacity >= 0 ] [
@@ -321,6 +322,8 @@ to make-farms
       set farm 1
     ]
   ]
+  ; reset seed after laying out villages/crops so that model runs vary
+  random-seed new-seed
 end
 
 to calculate-village-distance
@@ -1001,7 +1004,7 @@ roads-investment
 roads-investment
 0
 500
-250.0
+50.0
 25
 1
 million CFA
@@ -1049,7 +1052,7 @@ storage-weight
 storage-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1064,7 +1067,7 @@ village-weight
 village-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1078,7 +1081,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-5
+4
 
 PLOT
 1448
@@ -1194,6 +1197,21 @@ population-current
 0
 1
 11
+
+SLIDER
+30
+349
+245
+382
+seed-value
+seed-value
+0
+100
+2.0
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1552,7 +1570,7 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="investment_levels" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="investment_levels" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="17"/>
@@ -1564,9 +1582,6 @@ NetLogo 6.0.4
       <value value="&quot;bandafassi&quot;"/>
       <value value="&quot;ndorna&quot;"/>
       <value value="&quot;makacoulibantang&quot;"/>
-      <value value="&quot;grid&quot;"/>
-      <value value="&quot;radial&quot;"/>
-      <value value="&quot;random&quot;"/>
       <value value="&quot;grid_distributed&quot;"/>
       <value value="&quot;radial_distributed&quot;"/>
       <value value="&quot;random_distributed&quot;"/>
@@ -1576,6 +1591,26 @@ NetLogo 6.0.4
     <enumeratedValueSet variable="flood-weight">
       <value value="1"/>
     </enumeratedValueSet>
+  </experiment>
+  <experiment name="spatial_layouts" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="17"/>
+    <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
+    <metric>villages-along-paved</metric>
+    <metric>storage-connected</metric>
+    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
+    <enumeratedValueSet variable="environment">
+      <value value="&quot;grid&quot;"/>
+      <value value="&quot;radial&quot;"/>
+      <value value="&quot;random&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="roads-investment" first="50" step="50" last="500"/>
+    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
+    <enumeratedValueSet variable="flood-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="seed-value" first="1" step="1" last="5"/>
   </experiment>
 </experiments>
 @#$#@#$#@
