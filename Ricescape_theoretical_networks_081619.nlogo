@@ -2,10 +2,8 @@ extensions [ nw gis ]
 
 breed [ nodes node ]
 breed [ dummies dummy ]
-breed [ distanceCounters distanceCounter ]
 
 globals [
-  distanceRatio
   cells-per-km
   walking-distance
   ideal-segment-length
@@ -19,20 +17,7 @@ patches-own [
   roadsID
   roadsPaved
   storageCapacity
-  roadStartDistance
-  roadEndDistance
-  checkSilo
-  silosAlongRoads
-  villagesAlongRoads
-  distanceToPaved
   XYSum
-]
-
-distanceCounters-own [
-  distanceTurtle?
-  homeDistance
-  homeSilos
-  homeVillages
 ]
 
 nodes-own [
@@ -51,10 +36,6 @@ to setup
   clear-all
   set-current-plot "Degree distribution"
   make-layers
-  remove-villages
-  compute-manhattan-distances-out
-  compute-manhattan-distances-back-setup
-  calculate-node-distances
   make-farms
   add-storageCapacity
   update-plots
@@ -73,19 +54,16 @@ to make-layers
   if ( structure = "grid" or structure = "grid_distributed" ) [
     random-seed 0
     setup-grid
-    set distanceRatio 1.1
   ]
   if ( structure = "radial" or structure = "radial_distributed" ) [
     random-seed 0
     setup-radial
-    set distanceRatio 1.25
   ]
   if ( structure = "random" or structure = "random_distributed" ) [
     random-seed 14
     nw:generate-random nodes links 50 0.03
     let root-agent max-one-of nodes [ count my-links ]
     layout-radial nodes links root-agent
-    set distanceRatio 1.75
   ]
 
   ; hide network links and nodes
@@ -125,7 +103,6 @@ to make-layers
           set pcolor brown
           set roadsID nodeID
           set roadsPaved 0
-          set roadStartDistance 999999
         ]
       ]
     ]
@@ -149,7 +126,6 @@ to make-layers
       ask neighbors4 with [ roadsPaved != 0 ] [
         set pcolor brown
         set roadsPaved 0
-        set roadStartDistance 999999
         set roadsID max [ roadsID ] of neighbors4
       ]
     ]
@@ -242,48 +218,17 @@ to finish-setup
   ]
 end
 
-to remove-villages
-  random-seed new-seed
-  let villages-to-remove 1
-  let random-node-count random count nodes
-;  ask n-of random-node-count nodes [
-  ask n-of villages-to-remove nodes [
-    set pcolor brown
-    set storageCapacity -1
-  ]
-end
-
 to make-farms
-  let random-village-count random count patches with [ storageCapacity >= 0 ]
-  ask n-of random-village-count patches with [ storageCapacity >= 0 ] [
+  ask patches with [ storageCapacity >= 0 ] [
     let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
     let patchesCount count eligibleFarmPatches in-radius walking-distance
-    ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
-      set pcolor green
-      set farm 1
+    if( structure = "grid_distributed" or structure = "radial_distributed" or structure = "random_distributed" ) [
+      ask n-of random patchesCount eligibleFarmPatches in-radius walking-distance [
+        set pcolor green
+        set farm 1
+      ]
     ]
   ]
-
-
-;  ask patches with [ storageCapacity >= 0 ] [
-;    let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
-;    let patchesCount count eligibleFarmPatches in-radius walking-distance
-;    ifelse ( structure = "grid" or structure = "radial" or structure = "random" ) [
-;      if ( roadStartDistance < 999999 ) [
-;        if ( ( distanceToPaved * distanceRatio ) < roadStartDistance ) [
-;          ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
-;            set pcolor green
-;            set farm 1
-;          ]
-;        ]
-;      ]
-;    ] [
-;      ask n-of random patchesCount eligibleFarmPatches in-radius walking-distance [
-;        set pcolor green
-;        set farm 1
-;      ]
-;    ]
-;  ]
 end
 
 to add-storageCapacity
@@ -297,112 +242,16 @@ to add-storageCapacity
   ]
 end
 
-to calculate-node-distances
-  if count nodes with [ roadsPaved > 0 ] > 0 [
-    let maxX max [ pxcor ] of nodes with [ roadsPaved > 0 ]
-    let maxY max [ pycor ] of nodes with [ roadsPaved > 0 and pxcor = maxX ]
-    ask nodes [
-      set distanceToPaved distance one-of nodes with [ roadsPaved > 0 and pxcor = maxX and pycor = maxY ]
-    ]
-  ]
-end
-
-to compute-manhattan-distances-out
-  let unpavedRoads patches with [ roadsPaved = 0 ]
-  let unpavedRoadsNextToPavedRoads unpavedRoads with [ any? neighbors4 with [ roadsPaved > 0 ] ]
-  ask unpavedRoadsNextToPavedRoads [
-    sprout-distanceCounters 1 [
-      set homeDistance 0
-      set size 5
-    ]
-  ]
-  repeat 1000 [ compute-manhattan-distance-out-one-step ]
-end
-
-to compute-manhattan-distance-out-one-step
-  ask distanceCounters [
-    set roadStartDistance homeDistance
-    let nextDistance homeDistance + 1
-    let patchesToVisit neighbors4 with [ roadsID > -2 and roadsPaved = 0 and nextDistance < roadStartDistance ]
-    ask patchesToVisit [
-      if not any? distanceCounters-here [
-        sprout-distanceCounters 1 [
-          set homeDistance nextDistance
-          set size 5
-          set hidden? true
-        ]
-      ]
-    ]
-    die
-  ]
-end
-
-to compute-manhattan-distances-back-setup
-  ask patches with [ storageCapacity >= 0 ] [
-    sprout-distanceCounters 1 [
-      set size 5
-      set homeSilos 0
-      set homeVillages 0
-    ]
-  ]
-
-  repeat 1000 [ compute-manhattan-distance-back-one-step-setup ]
-
-end
-
-to compute-manhattan-distance-back-one-step-setup
-  ask distanceCounters [
-
-    ; check if silo has already been counted
-    let neighboringSilos neighbors4 with [ storageCapacity >= 0 and checkSilo = 0 ]
-    let neighboringSilosCount count neighboringSilos
-    if ( neighboringSilosCount >= 1 ) [
-      ask neighboringSilos [
-        set checkSilo 1
-      ]
-    ]
-
-    let neighboringStorage sum [ storageCapacity ] of neighboringSilos
-    let nextSilos homeSilos + neighboringStorage
-
-    let nextVillages homeVillages + neighboringSilosCount
-
-    ; add silo count from individual turtle to patch total
-    set silosAlongRoads silosAlongRoads + nextSilos
-    set villagesAlongRoads villagesAlongRoads + nextVillages
-
-    ; necessary because once turtles reach paved roads they keep replicating
-    ; and add to silo count making it become extremely high
-    if not any? neighbors4 with [ roadsPaved = 1 ] [
-
-      if any? neighbors4 with [ roadsPaved = 0 ] [
-        let minPatch min-one-of neighbors4 with [ roadsPaved = 0  ] [ roadStartDistance ]
-        ask minPatch [
-          ;        if not any? turtles-here [
-          sprout-distanceCounters 1 [
-            set size 5
-            set homeSilos nextSilos
-            set homeVillages nextVillages
-            ;                      set hidden? true
-          ]
-          ;        ]
-        ]
-      ]
-    ]
-    die
-  ]
-end
-
 ; quickly check the identity of all road segments on the map
-to color-roads
-  let roadsIDList remove-duplicates [ roadsID ] of patches with [ roadsID > -2 ]
-  foreach roadsIDList [ x ->
-    let randomColor random 100
-    ask patches with [ roadsID = x ] [
-      set pcolor randomColor
-    ]
-  ]
-end
+;to color-roads
+;  let roadsIDList remove-duplicates [ roadsID ] of patches with [ roadsID > -2 ]
+;  foreach roadsIDList [ x ->
+;    let randomColor random 100
+;    ask patches with [ roadsID = x ] [
+;      set pcolor randomColor
+;    ]
+;  ]
+;end
 
 to export
   let file-path "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Sensonomic/RiceScape_GitHub/Ricescape/"

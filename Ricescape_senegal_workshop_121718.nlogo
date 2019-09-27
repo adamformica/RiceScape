@@ -265,6 +265,21 @@ to display-storageCapacity
     [ set initialStorage initialStorage ]
     [ set initialStorage -1 ]
   ]
+  if( environment = "grid" or environment = "radial" or environment = "random" ) [
+    remove-villages
+  ]
+end
+
+to remove-villages
+  random-seed new-seed
+  if( environment = "grid" or environment = "radial" or environment = "random" ) [
+    let random-village-count random count patches with [ storageCapacity >= 0 ]
+    ask n-of random-village-count patches with [ storageCapacity >= 0 ] [
+      set pcolor brown
+      set storageCapacity -1
+      set initialStorage -1
+    ]
+  ]
 end
 
 to display-road-flood-risk
@@ -276,7 +291,11 @@ to display-road-flood-risk
 end
 
 to display-farms
-  gis:apply-raster farms-dataset farm
+  ifelse( environment = "grid" or environment = "radial" or environment = "random" ) [
+    make-farms
+  ] [
+    gis:apply-raster farms-dataset farm
+  ]
   ask patches [
     ifelse (farm = 1)
     [ set farm farm ]
@@ -291,6 +310,17 @@ to display-farms
     ]
   ]
   set initial-farm-count count patches with [ farm > 0 ]
+end
+
+to make-farms
+  let random-village-count random count patches with [ storageCapacity >= 0 ]
+  ask n-of random-village-count patches with [ storageCapacity >= 0 ] [
+    let eligibleFarmPatches patches with [ storageCapacity = -1 and roadsPaved = -1 and excludedClasses != 2 ]
+    let patchesCount count eligibleFarmPatches in-radius walking-distance
+    ask n-of patchesCount eligibleFarmPatches in-radius walking-distance [
+      set farm 1
+    ]
+  ]
 end
 
 to calculate-village-distance
@@ -1048,7 +1078,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-8
+5
 
 PLOT
 1448
@@ -1522,7 +1552,7 @@ NetLogo 6.0.4
 @#$#@#$#@
 @#$#@#$#@
 <experiments>
-  <experiment name="investment_levels" repetitions="5" runMetricsEveryStep="true">
+  <experiment name="investment_levels" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="17"/>
