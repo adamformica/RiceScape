@@ -1084,10 +1084,10 @@ environment
 8
 
 PLOT
-1448
-355
-1648
-505
+1449
+180
+1649
+330
 Villages connected
 years
 villages
@@ -1119,10 +1119,10 @@ NIL
 1
 
 PLOT
-1447
-182
-1647
-332
+1449
+514
+1649
+664
 Crop expansion
 years
 hectares
@@ -1137,10 +1137,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot crop-expansion"
 
 MONITOR
-1666
-182
-1792
-227
+1668
+514
+1794
+559
 Crop expansion (ha)
 crop-expansion
 0
@@ -1148,10 +1148,10 @@ crop-expansion
 11
 
 PLOT
-1449
-523
-1649
-673
+1450
+348
+1650
+498
 Storage connected
 years
 tons
@@ -1166,10 +1166,10 @@ PENS
 "default" 1.0 0 -16777216 true "" "plot storage-connected"
 
 MONITOR
-1670
-527
-1788
-572
+1671
+352
+1789
+397
 NIL
 storage-connected
 0
@@ -1177,10 +1177,10 @@ storage-connected
 11
 
 MONITOR
-1671
-355
-1785
-400
+1672
+180
+1786
+225
 Villages connected
 villages-along-paved
 0
