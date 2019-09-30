@@ -1004,7 +1004,7 @@ roads-investment
 roads-investment
 0
 500
-50.0
+250.0
 25
 1
 million CFA
@@ -1052,7 +1052,7 @@ storage-weight
 storage-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1067,7 +1067,7 @@ village-weight
 village-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1081,7 +1081,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-4
+5
 
 PLOT
 1448
@@ -1207,7 +1207,7 @@ seed-value
 seed-value
 0
 100
-2.0
+95.0
 1
 1
 NIL
@@ -1592,7 +1592,7 @@ NetLogo 6.0.4
       <value value="1"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="spatial_layouts" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="spatial_layouts" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="17"/>
@@ -1610,7 +1610,7 @@ NetLogo 6.0.4
     <enumeratedValueSet variable="flood-weight">
       <value value="1"/>
     </enumeratedValueSet>
-    <steppedValueSet variable="seed-value" first="1" step="1" last="5"/>
+    <steppedValueSet variable="seed-value" first="51" step="1" last="100"/>
   </experiment>
 </experiments>
 @#$#@#$#@
