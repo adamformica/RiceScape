@@ -1004,7 +1004,7 @@ roads-investment
 roads-investment
 0
 500
-250.0
+500.0
 25
 1
 million CFA
@@ -1081,7 +1081,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-5
+8
 
 PLOT
 1448
@@ -1207,7 +1207,7 @@ seed-value
 seed-value
 0
 100
-95.0
+1.0
 1
 1
 NIL
@@ -1591,6 +1591,9 @@ NetLogo 6.0.4
     <enumeratedValueSet variable="flood-weight">
       <value value="1"/>
     </enumeratedValueSet>
+    <enumeratedValueSet variable="seed-value">
+      <value value="1"/>
+    </enumeratedValueSet>
   </experiment>
   <experiment name="spatial_layouts" repetitions="5" runMetricsEveryStep="true">
     <setup>setup</setup>
@@ -1611,6 +1614,66 @@ NetLogo 6.0.4
       <value value="1"/>
     </enumeratedValueSet>
     <steppedValueSet variable="seed-value" first="51" step="1" last="100"/>
+  </experiment>
+  <experiment name="random_trade_offs" repetitions="5" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="17"/>
+    <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
+    <metric>villages-along-paved</metric>
+    <metric>storage-connected</metric>
+    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
+    <enumeratedValueSet variable="environment">
+      <value value="&quot;random&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="roads-investment" first="50" step="50" last="500"/>
+    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
+    <enumeratedValueSet variable="flood-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="seed-value">
+      <value value="8"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="radial_trade_offs" repetitions="5" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="17"/>
+    <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
+    <metric>villages-along-paved</metric>
+    <metric>storage-connected</metric>
+    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
+    <enumeratedValueSet variable="environment">
+      <value value="&quot;radial&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="roads-investment" first="50" step="50" last="500"/>
+    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
+    <enumeratedValueSet variable="flood-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="seed-value">
+      <value value="26"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="grid_trade_offs" repetitions="5" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="17"/>
+    <metric>( count patches with [ farm &gt; 0 ] - initial-farm-count ) * hectares-per-cell</metric>
+    <metric>villages-along-paved</metric>
+    <metric>storage-connected</metric>
+    <steppedValueSet variable="village-weight" first="0" step="1" last="1"/>
+    <enumeratedValueSet variable="environment">
+      <value value="&quot;grid&quot;"/>
+    </enumeratedValueSet>
+    <steppedValueSet variable="roads-investment" first="50" step="50" last="500"/>
+    <steppedValueSet variable="storage-weight" first="0" step="1" last="1"/>
+    <enumeratedValueSet variable="flood-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="seed-value">
+      <value value="50"/>
+    </enumeratedValueSet>
   </experiment>
 </experiments>
 @#$#@#$#@
