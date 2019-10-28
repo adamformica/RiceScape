@@ -304,7 +304,7 @@ CHOOSER
 structure
 structure
 "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-0
+2
 
 BUTTON
 41
@@ -356,7 +356,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 1 -16777216 true "" "histogram [ count my-links ] of turtles"
+"default" 1.0 1 -16777216 true "" "histogram [ count my-links ] of turtles with [ count my-links > 0 ]"
 
 MONITOR
 22

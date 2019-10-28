@@ -810,6 +810,7 @@ to pave-roads
 
     set current-roads-budget ( roads-budget + remaining-roads-budget )
 
+
     while [ current-roads-budget > 0 and count roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) and roadsConnected? = true ] > 0 ] [
 
       let roads-to-pave roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) and roadsConnected? = true ]
@@ -836,7 +837,14 @@ to pave-roads
 
       set remaining-roads-budget current-roads-budget
 
+
+      print word "remaining budget: " remaining-roads-budget
+
       set current-roads-budget current-roads-budget - [ my-length ] of road-to-pave
+
+      print word "updated current roads budget: " current-roads-budget
+
+      show count roads with [ my-paved = 0 and ( my-max-villages > 0 or my-max-storage > 0) and roadsConnected? = true ]
 
     ]
 
