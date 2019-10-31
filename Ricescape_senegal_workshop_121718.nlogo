@@ -116,7 +116,7 @@ end
 
 to go
   ; export maps
-;  export-world-raster
+  export-world-raster
   show-year
   ; initialize variables
   recalculate-variables
@@ -870,11 +870,11 @@ end
 to export-world-raster
   set world_raster gis:patch-dataset pcolor
 ;  activate when generating intermediate maps
-  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_maps/world_raster_export_files_" environment "/world_raster_export" )
-  gis:store-dataset world_raster word directory ticks
+;  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_and_trade_off_maps/world_raster_export_files_" environment "/world_raster_export" )
+;  gis:store-dataset world_raster word directory ticks
 ;  activate when generating trade off progression maps
-;  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_maps/world_raster_export_files_" environment "_trade_offs/world_raster_export")
-;  gis:store-dataset world_raster word directory seed-value
+  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_and_trade_off_maps/world_raster_export_files_" environment "_trade_offs/world_raster_export")
+  gis:store-dataset world_raster word directory seed-value
 end
 
 to show-year
@@ -1008,7 +1008,7 @@ roads-investment
 roads-investment
 0
 500
-150.0
+250.0
 25
 1
 million CFA
@@ -1056,7 +1056,7 @@ storage-weight
 storage-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1211,7 +1211,7 @@ seed-value
 seed-value
 1
 100
-8.0
+40.0
 1
 1
 NIL
@@ -1619,10 +1619,10 @@ NetLogo 6.1.1
     </enumeratedValueSet>
     <steppedValueSet variable="seed-value" first="51" step="1" last="100"/>
   </experiment>
-  <experiment name="trade_off_progression_maps_grid" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="maps_grid" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
-    <timeLimit steps="1"/>
+    <timeLimit steps="17"/>
     <metric>count turtles</metric>
     <enumeratedValueSet variable="village-weight">
       <value value="1"/>
@@ -1631,12 +1631,7 @@ NetLogo 6.1.1
       <value value="250"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
-      <value value="47"/>
-      <value value="26"/>
-      <value value="78"/>
-      <value value="45"/>
-      <value value="93"/>
-      <value value="43"/>
+      <value value="16"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
@@ -1648,7 +1643,90 @@ NetLogo 6.1.1
       <value value="&quot;grid&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="trade_off_progression_maps_radial" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="maps_radial" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="17"/>
+    <metric>count turtles</metric>
+    <enumeratedValueSet variable="village-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="roads-investment">
+      <value value="250"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="seed-value">
+      <value value="22"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="storage-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="flood-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="environment">
+      <value value="&quot;radial&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="maps_random" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="17"/>
+    <metric>count turtles</metric>
+    <enumeratedValueSet variable="village-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="roads-investment">
+      <value value="250"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="seed-value">
+      <value value="40"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="storage-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="flood-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="environment">
+      <value value="&quot;random&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="maps_trade_offs_grid" repetitions="1" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="1"/>
+    <metric>count turtles</metric>
+    <enumeratedValueSet variable="village-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="roads-investment">
+      <value value="250"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="seed-value">
+      <value value="16"/>
+      <value value="59"/>
+      <value value="26"/>
+      <value value="34"/>
+      <value value="54"/>
+      <value value="7"/>
+      <value value="45"/>
+      <value value="81"/>
+      <value value="35"/>
+      <value value="8"/>
+      <value value="49"/>
+      <value value="10"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="storage-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="flood-weight">
+      <value value="1"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="environment">
+      <value value="&quot;grid&quot;"/>
+    </enumeratedValueSet>
+  </experiment>
+  <experiment name="maps_trade_offs_radial" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="1"/>
@@ -1661,11 +1739,17 @@ NetLogo 6.1.1
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
       <value value="22"/>
-      <value value="15"/>
-      <value value="20"/>
-      <value value="35"/>
-      <value value="18"/>
-      <value value="10"/>
+      <value value="82"/>
+      <value value="25"/>
+      <value value="77"/>
+      <value value="38"/>
+      <value value="69"/>
+      <value value="49"/>
+      <value value="90"/>
+      <value value="30"/>
+      <value value="5"/>
+      <value value="41"/>
+      <value value="64"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
@@ -1677,7 +1761,7 @@ NetLogo 6.1.1
       <value value="&quot;radial&quot;"/>
     </enumeratedValueSet>
   </experiment>
-  <experiment name="trade_off_progression_maps_random" repetitions="1" runMetricsEveryStep="true">
+  <experiment name="maps_trade_offs_random" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
     <go>go</go>
     <timeLimit steps="1"/>
@@ -1689,12 +1773,18 @@ NetLogo 6.1.1
       <value value="250"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
-      <value value="8"/>
-      <value value="7"/>
-      <value value="49"/>
+      <value value="40"/>
+      <value value="3"/>
+      <value value="64"/>
+      <value value="36"/>
+      <value value="2"/>
+      <value value="33"/>
+      <value value="42"/>
+      <value value="17"/>
       <value value="61"/>
-      <value value="45"/>
-      <value value="13"/>
+      <value value="54"/>
+      <value value="46"/>
+      <value value="27"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
