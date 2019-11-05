@@ -1575,7 +1575,7 @@ NetLogo 6.1.1
     <enumeratedValueSet variable="flood-weight">
       <value value="1"/>
     </enumeratedValueSet>
-    <steppedValueSet variable="seed-value" first="51" step="1" last="100"/>
+    <steppedValueSet variable="seed-value" first="1" step="1" last="100"/>
   </experiment>
   <experiment name="maps_grid" repetitions="1" runMetricsEveryStep="true">
     <setup>setup</setup>
