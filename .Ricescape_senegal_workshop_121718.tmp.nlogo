@@ -653,9 +653,8 @@ to compute-manhattan-distances-back-go
     ]
   ]
 
-  ; reset these values as new shortest path
-  ; routes to upgraded roads are recalculated
-  ; when more roads are upgraded in each step
+  ; reset these values as new
+  ; when roads are upgraded in each step
 
   ask patches with [ silosAlongRoads > 0 or villagesAlongRoads > 0 ] [
     set silosAlongRoads 0
