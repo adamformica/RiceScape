@@ -107,7 +107,6 @@ to setup
   calculate-crops-per-person
   ; upgrade roads
   compute-manhattan-distances-out
-  compute-manhattan-distances-back-go
   calculate-road-flood-risk
   calculate-road-length
   reset-ticks
@@ -1043,7 +1042,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-3
+0
 
 PLOT
 1449
@@ -1169,7 +1168,7 @@ seed-value
 seed-value
 1
 100
-16.0
+41.0
 1
 1
 NIL
@@ -1589,7 +1588,7 @@ NetLogo 6.1.1
       <value value="250"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
-      <value value="16"/>
+      <value value="11"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
@@ -1613,7 +1612,7 @@ NetLogo 6.1.1
       <value value="250"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
-      <value value="22"/>
+      <value value="100"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
@@ -1637,7 +1636,7 @@ NetLogo 6.1.1
       <value value="250"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
-      <value value="40"/>
+      <value value="41"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
@@ -1661,18 +1660,18 @@ NetLogo 6.1.1
       <value value="250"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
-      <value value="16"/>
-      <value value="59"/>
-      <value value="26"/>
-      <value value="34"/>
-      <value value="54"/>
-      <value value="7"/>
-      <value value="45"/>
-      <value value="81"/>
-      <value value="35"/>
-      <value value="8"/>
-      <value value="49"/>
-      <value value="10"/>
+      <value value="11"/>
+      <value value="63"/>
+      <value value="76"/>
+      <value value="55"/>
+      <value value="80"/>
+      <value value="14"/>
+      <value value="93"/>
+      <value value="33"/>
+      <value value="6"/>
+      <value value="85"/>
+      <value value="46"/>
+      <value value="86"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
@@ -1696,18 +1695,18 @@ NetLogo 6.1.1
       <value value="250"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
-      <value value="22"/>
-      <value value="82"/>
-      <value value="25"/>
-      <value value="77"/>
-      <value value="38"/>
+      <value value="100"/>
       <value value="69"/>
-      <value value="49"/>
-      <value value="90"/>
+      <value value="85"/>
+      <value value="95"/>
+      <value value="50"/>
       <value value="30"/>
-      <value value="5"/>
-      <value value="41"/>
-      <value value="64"/>
+      <value value="97"/>
+      <value value="29"/>
+      <value value="8"/>
+      <value value="53"/>
+      <value value="90"/>
+      <value value="3"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
@@ -1731,18 +1730,18 @@ NetLogo 6.1.1
       <value value="250"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
-      <value value="40"/>
-      <value value="3"/>
-      <value value="64"/>
+      <value value="41"/>
+      <value value="25"/>
+      <value value="31"/>
+      <value value="21"/>
+      <value value="94"/>
       <value value="36"/>
-      <value value="2"/>
       <value value="33"/>
-      <value value="42"/>
-      <value value="17"/>
-      <value value="61"/>
-      <value value="54"/>
-      <value value="46"/>
-      <value value="27"/>
+      <value value="86"/>
+      <value value="82"/>
+      <value value="9"/>
+      <value value="69"/>
+      <value value="39"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
