@@ -135,7 +135,7 @@ to go
   ; upgrade roads
   ; recalculate storage along roads as
   ; more storage added
-  compute-manhattan-distances-back-go
+  compute-manhattan-distances-back
   normalize-criteria-values
   check-roads-connected
   pave-roads
@@ -640,7 +640,7 @@ end
 ; total capacity stored in the patches to prioritize road
 ; building
 
-to compute-manhattan-distances-back-go
+to compute-manhattan-distances-back
 
   ask patches with [ storageCapacity >= 0 ] [
     sprout 1 [
@@ -671,11 +671,11 @@ to compute-manhattan-distances-back-go
     set checkSilo 0
   ]
 
-  repeat 600 [ compute-manhattan-distance-back-one-step-go ]
+  repeat 600 [ compute-manhattan-distance-back-one-step ]
 
 end
 
-to compute-manhattan-distance-back-one-step-go
+to compute-manhattan-distance-back-one-step
 
   ask turtles with [ distanceTurtle? = true ] [
 
@@ -965,7 +965,7 @@ roads-investment
 roads-investment
 0
 500
-150.0
+50.0
 25
 1
 million CFA
@@ -1013,7 +1013,7 @@ storage-weight
 storage-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1028,7 +1028,7 @@ village-weight
 village-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1042,7 +1042,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "ndorna" "makacoulibantang" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-0
+1
 
 PLOT
 1449
