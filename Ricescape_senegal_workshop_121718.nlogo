@@ -471,13 +471,13 @@ to report-storageCapacity
   foreach sort-on [ pycor] patches with [ storageCapacity >= 0 ] [ p ->
     ask p [
       ifelse ( capacityDifference > 0 ) [
-        output-show word "added capacity: " round capacityDifference
+;        output-show word "added capacity: " round capacityDifference
 ;        for storage added by village table
-;        output-print round capacityDifference
+        output-print round capacityDifference
       ] [
-        output-show "added capacity: 0"
+;        output-show "added capacity: 0"
 ;        for storage added by village table
-;        output-print 0
+        output-print 0
       ]
     ]
   ]
@@ -487,9 +487,8 @@ to add-villages
   let initial-people-per-village initial-population / count patches with [ storageCapacity >= 0 ]
 
 ;  Each village is surrounded by a maximum of pi * walking distance^2 crop cells.
-;  ha / village * T / ha * people / T
-  let people-per-village-connected initial-people-per-village + ( pi * walking-distance ^ 2 * yield-connected * (1 / crops-per-person) )
-  let people-per-village-disconnected initial-people-per-village + ( pi * walking-distance ^ 2 * yield-disconnected * (1 / crops-per-person) )
+;  cells / village * ha / cell * T / ha *  people / T
+  let max-hectares-per-village pi * walking-distance ^ 2 * hectares-per-cell
 
   let available-housing-connected count patches with [ storageCapacity >= 0 and villageConnected? = true ] * people-per-village-connected
   let available-housing-disconnected count patches with [ storageCapacity >= 0 and villageConnected? = 0 ] * people-per-village-disconnected
@@ -569,7 +568,7 @@ to add-villages
 
         ]
 
-        ; add a village to the perimeter patch not close to
+        ; add a village to the perimeter patch not close to roads or
         ; existing villages with the most available farmland
 
         ifelse ( count patches with [ eligibleVillagePatch? = true and storageCapacity = -1 and eligibleVillagePatchNearRoad? = 0 and nearOtherVillage? = 0 ] > 0 ) [
@@ -784,7 +783,7 @@ to pave-roads
           ask my-patches with [ storageCapacity >= 0 ] [
             set pcolor red
           ]
-          output-show word "Pave road " my-roads-ID
+;          output-show word "Pave road " my-roads-ID
         ]
 
         check-roads-connected
@@ -827,17 +826,17 @@ end
 to export-world-raster
   set world_raster gis:patch-dataset pcolor
 ;  activate when generating intermediate maps
-;  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_and_trade_off_maps/world_raster_export_files_" environment "/world_raster_export" )
-;  gis:store-dataset world_raster word directory ticks
+  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_and_trade_off_maps/world_raster_export_files_" environment "/world_raster_export" )
+  gis:store-dataset world_raster word directory ticks
 ;  activate when generating trade off progression maps
-  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_and_trade_off_maps/world_raster_export_files_" environment "_trade_offs/world_raster_export")
-  gis:store-dataset world_raster word directory seed-value
+;  let directory (word  "C:/Users/Sensonomic Admin/Dropbox/Oxford/DPhil/Roads model/Intermediate_and_trade_off_maps/world_raster_export_files_" environment "_trade_offs/world_raster_export")
+;  gis:store-dataset world_raster word directory seed-value
 end
 
 to show-year
-  output-show (word "Year " (ticks + 2018))
+;  output-show (word "Year " (ticks + 2019))
 ;  for storage added by village table
-;  output-print (ticks + 2018)
+  output-print (ticks + 2019)
 end
 
 to count-villages-along-paved
@@ -965,7 +964,7 @@ roads-investment
 roads-investment
 0
 500
-50.0
+150.0
 25
 1
 million CFA
@@ -1013,7 +1012,7 @@ storage-weight
 storage-weight
 0
 1
-0.0
+1.0
 0.1
 1
 NIL
@@ -1028,7 +1027,7 @@ village-weight
 village-weight
 0
 1
-1.0
+0.0
 0.1
 1
 NIL
@@ -1041,8 +1040,8 @@ CHOOSER
 117
 environment
 environment
-"bandafassi" "ndorna" "makacoulibantang" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-1
+"bandafassi" "makacoulibantang" "ndorna" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
+3
 
 PLOT
 1449
@@ -1168,7 +1167,7 @@ seed-value
 seed-value
 1
 100
-41.0
+12.0
 1
 1
 NIL
