@@ -489,6 +489,8 @@ to add-villages
 ;  Each village is surrounded by a maximum of pi * walking distance^2 crop cells.
 ;  cells / village * ha / cell * T / ha *  people / T
   let max-hectares-per-village pi * walking-distance ^ 2 * hectares-per-cell
+  let people-per-village-connected initial-people-per-village + ( max-hectares-per-village * yield-connected * (1 / crops-per-person) )
+  let people-per-village-disconnected initial-people-per-village + ( max-hectares-per-village * yield-disconnected * (1 / crops-per-person) )
 
   let available-housing-connected count patches with [ storageCapacity >= 0 and villageConnected? = true ] * people-per-village-connected
   let available-housing-disconnected count patches with [ storageCapacity >= 0 and villageConnected? = 0 ] * people-per-village-disconnected
