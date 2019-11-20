@@ -57,7 +57,7 @@ patches-own [
   storageCapacity
   farmProbability
   capacityDifference
-  roadStartDistance
+  distanceToPaved
   roadEndDistance
   checkSilo
   silosAlongRoads
@@ -235,7 +235,7 @@ to apply-roadsID
   ask patches [
     ifelse (roadsID > -2)
     [ set roadsID roadsID
-      set roadStartDistance 999999
+      set distanceToPaved 999999
       set roadEndDistance 999999 ]
     [ set roadsID -2 ]
   ]
@@ -376,7 +376,7 @@ end
 to calculate-road-flood-risk
   ask patches with [ roadsID > -2 ] [
     ifelse ( elevation < flood-risk-elevation ) [
-      set avoidedFloodProbability 1 - ( ( flood-risk-elevation - elevation ) / flood-risk-elevation )
+      set avoidedFloodProbability elevation / flood-risk-elevation
     ] [
       set avoidedFloodProbability 1
     ]
@@ -603,13 +603,25 @@ to add-villages
 
 end
 
+; For every unpaved road patch, we compute the distance to the closest paved road.
+; Every unpaved road is connected to a paved road.
+
+; We start by sprouting distance turtles at the connections between unpaved and paved roads.
+; Then turtles follow unpaved roads to maximize distance between itself and paved roads.
+; At every road intersection, as many turtles as needed are spawned to continue in every direction.
+
+; Effectively what we're doing is applying Dijkstra's algorithm to a graph of roads.
+; The nodes of the graph are road patches and the edges always have a distance of one.
+
 to compute-manhattan-distances-out
   let unpavedRoads patches with [ roadsPaved = 0 ]
   let unpavedRoadsNextToPavedRoads unpavedRoads with [ any? neighbors4 with [ roadsPaved > 0 ] ]
   ask unpavedRoadsNextToPavedRoads [
+    ; TODO set value to 1 once we figure out how we use distanceToPaved
+    set distanceToPaved 0
+
     sprout 1 [
       set distanceTurtle? true
-      set homeDistance 0
       set size 5
     ]
   ]
@@ -618,14 +630,14 @@ end
 
 to compute-manhattan-distance-out-one-step
   ask turtles with [ distanceTurtle? = true ] [
-    set roadStartDistance homeDistance
-    let nextDistance homeDistance + 1
-    let patchesToVisit neighbors4 with [ roadsID > -2 and roadsPaved = 0 and nextDistance < roadStartDistance ]
+    let currentDistance distanceToPaved
+    let patchesToVisit neighbors4 with [ roadsID > -2 and roadsPaved = 0 and distanceToPaved > currentDistance ]
     ask patchesToVisit [
       if not any? turtles-here [
+        set distanceToPaved currentDistance + 1
+
         sprout 1 [
           set distanceTurtle? true
-          set homeDistance nextDistance
           set size 5
           set hidden? true
         ]
@@ -699,10 +711,11 @@ to compute-manhattan-distance-back-one-step
 
     ; necessary because once turtles reach paved roads they keep replicating
     ; and add to silo count making it become extremely high
-    if not any? neighbors4 with [ roadsPaved = 1 ] [
+    if not any? neighbors4 with [ roadsPaved > 0 ] [
 
       if any? neighbors4 with [ roadsPaved = 0 ] [
-        let minPatch min-one-of neighbors4 with [ roadsPaved = 0  ] [ roadStartDistance ]
+        let unpavedPatches neighbors4 with [ roadsPaved = 0 ]
+        let minPatch min-one-of unpavedPatches [ distanceToPaved ]
         ask minPatch [
           sprout 1 [
             set distanceTurtle? true
@@ -1043,7 +1056,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "makacoulibantang" "ndorna" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-3
+0
 
 PLOT
 1449
