@@ -812,8 +812,7 @@ to pave-roads
 
         set remaining-roads-budget current-roads-budget
 
-        ; break from the while loop
-        set current-roads-budget 0
+
 
       ]
 
