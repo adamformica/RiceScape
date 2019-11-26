@@ -172,7 +172,7 @@ to set-environment-variables
   if ( environment = "makacoulibantang" ) [
     set initial-population 42000
     ;    percent per year
-    set population-growth 0.029
+    set population-growth 0.0098
     set hectares-per-cell 3.61
     set cells-per-km 5
   ]
@@ -180,7 +180,7 @@ to set-environment-variables
   if ( environment = "ndorna" ) [
     set initial-population 13000
     ;    percent per year
-    set population-growth 0.026
+    set population-growth 0.03
     set hectares-per-cell 2.89
     set cells-per-km 6
   ]
