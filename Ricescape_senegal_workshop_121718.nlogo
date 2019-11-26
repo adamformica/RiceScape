@@ -115,7 +115,7 @@ end
 
 to go
   ; export maps
-  export-world-raster
+;  export-world-raster
   show-year
   ; initialize variables
   recalculate-variables
@@ -1683,17 +1683,11 @@ NetLogo 6.1.1
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
       <value value="26"/>
-      <value value="34"/>
       <value value="96"/>
-      <value value="30"/>
       <value value="45"/>
-      <value value="77"/>
       <value value="59"/>
-      <value value="35"/>
       <value value="87"/>
-      <value value="14"/>
       <value value="15"/>
-      <value value="50"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
@@ -1718,17 +1712,11 @@ NetLogo 6.1.1
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
       <value value="95"/>
-      <value value="57"/>
       <value value="60"/>
-      <value value="69"/>
       <value value="59"/>
-      <value value="51"/>
       <value value="24"/>
-      <value value="53"/>
       <value value="99"/>
-      <value value="82"/>
       <value value="72"/>
-      <value value="61"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
@@ -1753,17 +1741,11 @@ NetLogo 6.1.1
     </enumeratedValueSet>
     <enumeratedValueSet variable="seed-value">
       <value value="8"/>
-      <value value="14"/>
       <value value="7"/>
-      <value value="55"/>
       <value value="45"/>
-      <value value="58"/>
       <value value="40"/>
-      <value value="86"/>
       <value value="35"/>
-      <value value="42"/>
       <value value="46"/>
-      <value value="19"/>
     </enumeratedValueSet>
     <enumeratedValueSet variable="storage-weight">
       <value value="1"/>
