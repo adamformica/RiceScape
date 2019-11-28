@@ -198,12 +198,12 @@ to recalculate-variables
 end
 
 to read-spatial-data
-  set farms-dataset gis:load-dataset (word environment "_data/" environment "_EO_cropland.asc")
-  set roadsID-dataset gis:load-dataset (word environment "_data/" environment "_roads_ID.asc")
-  set roadsPaved-dataset gis:load-dataset (word environment "_data/" environment "_roads_paved.asc")
-  set storageCapacity-dataset gis:load-dataset (word environment "_data/storage_" environment "_capacity.asc")
-  set hand-dataset gis:load-dataset (word environment "_data/" environment "_hand.asc")
-  set excluded-classes-dataset gis:load-dataset (word environment "_data/" environment "_EO_trees.asc")
+  set farms-dataset gis:load-dataset (word "Data/" environment "_data/" environment "_EO_cropland.asc")
+  set roadsID-dataset gis:load-dataset (word "Data/" environment "_data/" environment "_roads_ID.asc")
+  set roadsPaved-dataset gis:load-dataset (word "Data/" environment "_data/" environment "_roads_paved.asc")
+  set storageCapacity-dataset gis:load-dataset (word "Data/" environment "_data/storage_" environment "_capacity.asc")
+  set hand-dataset gis:load-dataset (word "Data/" environment "_data/" environment "_hand.asc")
+  set excluded-classes-dataset gis:load-dataset (word "Data/" environment "_data/" environment "_EO_trees.asc")
 ;  set excluded-classes-dataset gis:load-dataset (word environment "_data/" environment "_excluded_classes.asc")
 end
 
@@ -1064,7 +1064,7 @@ CHOOSER
 environment
 environment
 "bandafassi" "makacoulibantang" "ndorna" "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-0
+3
 
 PLOT
 1449
@@ -1190,7 +1190,7 @@ seed-value
 seed-value
 1
 100
-1.0
+26.0
 1
 1
 NIL

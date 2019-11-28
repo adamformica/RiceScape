@@ -44,7 +44,7 @@ end
 to make-layers
   ; set up GIS with extent of Bandafassi
   let community "bandafassi"
-  let farms-dataset gis:load-dataset (word community "_data/" community "_EO_cropland.asc")
+  let farms-dataset gis:load-dataset (word "Data/" community "_data/" community "_EO_cropland.asc")
   gis:set-world-envelope (gis:envelope-of farms-dataset)
 
   set cells-per-km 4
@@ -304,7 +304,7 @@ CHOOSER
 structure
 structure
 "grid" "radial" "random" "grid_distributed" "radial_distributed" "random_distributed"
-2
+3
 
 BUTTON
 41
