@@ -204,6 +204,7 @@ to read-spatial-data
   set storageCapacity-dataset gis:load-dataset (word "Data/" environment "_data/storage_" environment "_capacity.asc")
   set hand-dataset gis:load-dataset (word "Data/" environment "_data/" environment "_hand.asc")
   set excluded-classes-dataset gis:load-dataset (word "Data/" environment "_data/" environment "_EO_trees.asc")
+
 end
 
 to load-and-display-spatial-data
